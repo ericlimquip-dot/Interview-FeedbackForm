@@ -184,6 +184,7 @@
    ====================================================================== */
 const STORE_KEY = "msbu_feedback_config_v3";
 const ROLE_KEY  = "msbu_feedback_active_role";
+const BACKEND_URL = "https://script.google.com/a/macros/msbu.co.id/s/AKfycby3gXkBcr6JBCti6TSR8xOeLTCGK_3yww1d7p7gv-coaqG14Vorp4hqIX7nkz3OZKqPJg/exec";
 const uid = () => "id" + Math.random().toString(36).slice(2, 9);
 const $  = (s,r=document)=>r.querySelector(s);
 const $$ = (s,r=document)=>[...r.querySelectorAll(s)];
@@ -220,7 +221,7 @@ function defaultConfig(){
   return {
     brand:"MSBU",
     recipients:"erika@msbukonsultan.id, hr@msbu.co.id, e@msbu.co.id",
-    endpoint:"",
+    endpoint:BACKEND_URL,
     forms:{
       recruiter:{
         role:"Recruiter",
@@ -259,11 +260,15 @@ function defaultConfig(){
 
 /* ---------------- state ---------------- */
 let cfg = migrate(load());
+save();                                                // persist any migrated fields
 let active = localStorage.getItem(ROLE_KEY) || null;   // "recruiter" | "hiringManager" | null
 
 /* one-time cleanups to already-saved configs */
 function migrate(c){
-  try{ Object.values(c.forms||{}).forEach(f=>{ if(Array.isArray(f.meta)) f.meta=f.meta.filter(m=>m.label!=="Interview stage"); }); }catch(e){}
+  try{
+    Object.values(c.forms||{}).forEach(f=>{ if(Array.isArray(f.meta)) f.meta=f.meta.filter(m=>m.label!=="Interview stage"); });
+    if(!c.endpoint) c.endpoint = BACKEND_URL;          // auto-fill Backend URL if empty
+  }catch(e){}
   return c;
 }
 let ans = {};                                          // per-role answer bags (transient)

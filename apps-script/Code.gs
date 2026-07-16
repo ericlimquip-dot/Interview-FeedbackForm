@@ -84,6 +84,37 @@ function doGet() {
   return json({ ok: true, service: "MSBU Interview Feedback backend is live." });
 }
 
+/**
+ * DIAGNOSTIC — run this straight from the editor (Run ▸ runTest).
+ * It calls doPost with a fake submission, so it exercises the whole path
+ * (create Sheet -> create folder -> export xlsx -> send email) and shows
+ * any REAL error in the execution log — unlike the form, which hides errors.
+ * Sends the test email only to the address below; change it if you like.
+ */
+function runTest() {
+  var fake = { postData: { contents: JSON.stringify({
+    formTitle: "TEST — Recruiter (diagnostic)",
+    role: "Recruiter",
+    submittedAt: new Date().toISOString(),
+    meta: {
+      "Candidate name": "Test Candidate",
+      "Position applied for": "QA Engineer",
+      "Interviewer name": "Eric",
+      "Interview date": "2026-07-16"
+    },
+    recommendation: "Hire",
+    evalScore: 3,
+    score: { total: 9, max: 12, percent: 75 },
+    answers: [
+      { section: "Core Competencies", question: "Technical expertise", type: "scorecard", value: "Hire" },
+      { section: "", question: "General comments", type: "paragraph", value: "This is a diagnostic test submission." }
+    ],
+    recipients: ["e@msbu.co.id"]
+  }) } };
+  var out = doPost(fake);
+  Logger.log(out.getContent());   // {"ok":true,...} on success
+}
+
 /* ---------------- helpers ---------------- */
 
 function flatten(p) {
