@@ -22,12 +22,12 @@ required paragraph questions.
 
 | File | Purpose |
 |------|---------|
-| `Interview Feedback Form.html` | Both forms + role picker. Open in any browser. |
+| `index.html` | Both forms + role picker. Open in any browser. |
 | `apps-script/Code.gs` | Google Apps Script backend — writes to Google Sheets + sends email. |
 
 ## How the forms work
 
-Open `Interview Feedback Form.html` in a browser and choose **Recruiter** or
+Open `index.html` in a browser and choose **Recruiter** or
 **Hiring Manager**. Fill the form and click **Submit feedback**.
 
 - **Question text** is editable inline; **＋ Add another question** adds a row; the
