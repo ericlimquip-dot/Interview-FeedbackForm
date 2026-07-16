@@ -26,6 +26,18 @@ var DEFAULT_RECIPIENTS = "hr@msbu.co.id";
 // Falls back to a clean "M | S | B | U" text wordmark if this ever fails to load.
 var LOGO_URL = "https://msbu.co.id/hs-fs/hubfs/W_Primary%20with%20no%20Slogan_No%20Bg2x.png";
 
+// Scorecard rating scale (shown as a legend at the bottom of each submission sheet).
+var SCALE = [
+  { icon: "👎👎", label: "Critical Deficit / Does Not Meet Expectations",
+    desc: "The candidate significantly lacks the required skill. They provided poor examples, demonstrated no understanding, or their approach would cause operational issues." },
+  { icon: "👎", label: "Needs Development / Below Expectations",
+    desc: "The candidate has a superficial understanding or limited experience. They might need heavy hand-holding, extensive training, or struggled to articulate a clear success story." },
+  { icon: "👍", label: "Competent / Meets Expectations",
+    desc: "The candidate is fully capable. They answered the situational questions well, possess the necessary experience to do the job independently day one, and meet the baseline requirements." },
+  { icon: "👍👍", label: "Expert / Exceeds Expectations",
+    desc: "The candidate went above and beyond. They demonstrated advanced mastery, shared impressive metrics/results, showed strategic thinking, and could easily mentor others in this skill." }
+];
+
 function doPost(e) {
   try {
     var payload = JSON.parse(e.postData.contents);
@@ -108,9 +120,9 @@ function runTest() {
     evalScore: 3,
     score: { total: 10, max: 12, percent: 83 },
     answers: [
-      { section: "Core Competencies", question: "Cross-functional empathy", type: "scorecard", value: "👍 Hire" },
-      { section: "Core Competencies", question: "Technical expertise",      type: "scorecard", value: "👍👍 Strong Hire" },
-      { section: "Core Competencies", question: "Adaptability",             type: "scorecard", value: "👍 Hire" },
+      { section: "Core Competencies", question: "Cross-functional empathy", type: "scorecard", value: "👍 Competent / Meets Expectations" },
+      { section: "Core Competencies", question: "Technical expertise",      type: "scorecard", value: "👍👍 Expert / Exceeds Expectations" },
+      { section: "Core Competencies", question: "Adaptability",             type: "scorecard", value: "👍 Competent / Meets Expectations" },
       { section: "", question: "Why is the candidate interested in this role?",     type: "paragraph", value: "Wants a bigger backend challenge and to grow into full-stack." },
       { section: "", question: "Summary of relevant experience",                    type: "paragraph", value: "4+ years front-end (React/Redux); moving toward full-stack with Spring Boot." },
       { section: "", question: "Salary expectations & notice period",               type: "paragraph", value: "IDR 18-20 million; one month notice." },
@@ -221,6 +233,7 @@ function writePerSubmission(sheet, p) {
   if (comps.length) { head("CORE COMPETENCIES"); comps.forEach(function (a) { dataRow(a.question, a.value); }); }
   var qs = (p.answers || []).filter(function (a) { return !a.section; });
   if (qs.length) { head("FEEDBACK"); qs.forEach(function (a) { dataRow(a.question, a.value); }); }
+  if (comps.length) { head("SCORECARD RATING SCALE"); SCALE.forEach(function (s) { dataRow(s.icon + "  " + s.label, s.desc); }); }
 
   var n = rows.length;
   sheet.getRange(1, 1, n, 2).setValues(rows);

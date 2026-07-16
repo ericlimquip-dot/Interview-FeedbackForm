@@ -181,10 +181,10 @@ const $  = (s,r=document)=>r.querySelector(s);
 const $$ = (s,r=document)=>[...r.querySelectorAll(s)];
 
 const THUMBS = [
-  {v:1, icon:"👎👎", label:"Strong No Hire"},
-  {v:2, icon:"👎",   label:"No Hire"},
-  {v:3, icon:"👍",   label:"Hire"},
-  {v:4, icon:"👍👍", label:"Strong Hire"},
+  {v:1, icon:"👎👎", label:"Critical Deficit / Does Not Meet Expectations"},
+  {v:2, icon:"👎",   label:"Needs Development / Below Expectations"},
+  {v:3, icon:"👍",   label:"Competent / Meets Expectations"},
+  {v:4, icon:"👍👍", label:"Expert / Exceeds Expectations"},
 ];
 
 /* ---------------- default config ---------------- */
@@ -368,7 +368,7 @@ function compCard(f){
           <input class="comp-desc" data-compdesc="${it.id}" value="${esc(it.desc||'')}" placeholder="Add description" />
         </div>
         <div class="thumbs">
-          ${THUMBS.map(t=>`<button class="thumb" data-compthumb="${it.id}" data-val="${t.v}">${t.icon}</button>`).join("")}
+          ${THUMBS.map(t=>`<button class="thumb" data-compthumb="${it.id}" data-val="${t.v}" title="${esc(t.label)}">${t.icon}</button>`).join("")}
         </div>
         <button class="comp-del" data-compdel="${it.id}" title="Remove competency">×</button>
       </div>`).join("")}
