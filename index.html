@@ -85,6 +85,7 @@
          cursor:pointer;display:grid;place-items:center;filter:grayscale(1);opacity:.55;transition:.12s;line-height:1;white-space:nowrap}
   .thumb:hover{opacity:1;border-color:var(--brand)}
   .thumb.sel{opacity:1;filter:none;background:#eef0ff;border-color:var(--brand)}
+  .thumb:disabled{opacity:.28;filter:grayscale(1);cursor:not-allowed;pointer-events:none;background:var(--field-bg);border-color:var(--line)}
   .comp-del{border:0;background:transparent;color:var(--muted2);font-size:20px;cursor:pointer;line-height:1;padding:4px 6px}
   .comp-del:hover{color:var(--red)}
   .add-row{width:100%;text-align:left;border:1px dashed var(--line);background:var(--field-bg);border-radius:8px;
@@ -368,7 +369,7 @@ function compCard(f){
           <input class="comp-desc" data-compdesc="${it.id}" value="${esc(it.desc||'')}" placeholder="Add description" />
         </div>
         <div class="thumbs">
-          ${THUMBS.map(t=>`<button class="thumb" data-compthumb="${it.id}" data-val="${t.v}" title="${esc(t.label)}">${t.icon}</button>`).join("")}
+          ${THUMBS.map(t=>`<button class="thumb" data-compthumb="${it.id}" data-val="${t.v}" title="${esc(t.label)}" ${(it.name||'').trim()?'':'disabled'}>${t.icon}</button>`).join("")}
         </div>
         <button class="comp-del" data-compdel="${it.id}" title="Remove competency">×</button>
       </div>`).join("")}
@@ -440,7 +441,7 @@ document.addEventListener("input",e=>{
   if(!f) return;
   if(t.dataset.qlabel!==undefined){ const q=f.questions.find(x=>x.id===t.dataset.qlabel); if(q){ q.label=t.value; save(); } }
   else if(t.dataset.comptitle!==undefined){ f.competencies.title=t.value; save(); }
-  else if(t.dataset.compname!==undefined){ const it=f.competencies.items.find(x=>x.id===t.dataset.compname); if(it){ it.name=t.value; save(); } }
+  else if(t.dataset.compname!==undefined){ const it=f.competencies.items.find(x=>x.id===t.dataset.compname); if(it){ it.name=t.value; save(); const on=t.value.trim()!==""; $$(`[data-compthumb="${t.dataset.compname}"]`).forEach(b=>b.disabled=!on); } }
   else if(t.dataset.compdesc!==undefined){ const it=f.competencies.items.find(x=>x.id===t.dataset.compdesc); if(it){ it.desc=t.value; save(); } }
   else if(t.dataset.qans!==undefined){ b.questions[t.dataset.qans]=t.value; }
   else if(t.dataset.meta!==undefined){ b.meta[t.dataset.meta]=t.value; }
