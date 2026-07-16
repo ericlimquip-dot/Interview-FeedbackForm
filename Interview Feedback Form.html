@@ -3,225 +3,187 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Interview Feedback Form — MSBU</title>
+<title>Hiring Manager Feedback Form — MSBU</title>
 <style>
   :root{
-    --bg:#f4f6f9; --card:#ffffff; --ink:#1f2933; --muted:#6b7280;
-    --line:#e2e8f0; --brand:#1d4ed8; --brand-dark:#1e40af;
-    --ok:#059669; --warn:#d97706; --danger:#dc2626; --soft:#eef2ff;
-    --radius:12px; --shadow:0 1px 3px rgba(0,0,0,.08),0 8px 24px rgba(0,0,0,.04);
+    --bg:#ededed; --card:#ffffff; --ink:#3b3b3b; --ink-strong:#2b2b2b;
+    --muted:#9aa0a6; --muted2:#b7bcc2; --line:#e6e6e6; --line2:#eaeaea;
+    --brand:#5153ff; --brand-dark:#4244e0; --accent-line:#4b6bfb;
+    --red:#f0554d; --ok:#2e9e6b; --field-bg:#f6f7f8;
+    --radius:6px; --shadow:0 1px 2px rgba(0,0,0,.06);
   }
   *{box-sizing:border-box}
   body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-       background:var(--bg);color:var(--ink);line-height:1.5;-webkit-font-smoothing:antialiased}
-  .wrap{max-width:900px;margin:0 auto;padding:24px 16px 80px}
+       background:var(--bg);color:var(--ink);line-height:1.5;-webkit-font-smoothing:antialiased;font-size:15px}
+  .wrap{max-width:940px;margin:0 auto;padding:20px 18px 120px}
   header.app{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px;flex-wrap:wrap}
-  .logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:18px}
-  .logo .badge{background:var(--brand);color:#fff;width:34px;height:34px;border-radius:9px;display:grid;place-items:center;font-size:15px}
-  .toolbar{display:flex;gap:8px;flex-wrap:wrap}
-  button{font:inherit;cursor:pointer;border:1px solid var(--line);background:#fff;color:var(--ink);
-          padding:8px 14px;border-radius:9px;transition:.15s;font-weight:600}
-  button:hover{border-color:#cbd5e1;background:#f8fafc}
-  button.primary{background:var(--brand);border-color:var(--brand);color:#fff}
-  button.primary:hover{background:var(--brand-dark)}
-  button.ghost{background:transparent}
-  button.danger{color:var(--danger);border-color:#fecaca;background:#fef2f2}
-  button.danger:hover{background:#fee2e2}
-  button.sm{padding:5px 10px;font-size:13px;border-radius:7px}
-  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);
-        padding:22px;margin-bottom:18px}
-  h1{font-size:22px;margin:0 0 4px}
-  h2.section-title{font-size:17px;margin:0}
-  .muted{color:var(--muted)}
-  .desc{color:var(--muted);font-size:14px;margin:2px 0 0}
-  label.field{display:block;font-weight:600;font-size:14px;margin:0 0 6px}
-  label.field .req{color:var(--danger);margin-left:3px}
-  input[type=text],input[type=date],input[type=email],input[type=number],select,textarea{
-    width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:8px;font:inherit;background:#fff;color:var(--ink)}
-  textarea{min-height:88px;resize:vertical}
-  input:focus,select:focus,textarea:focus{outline:2px solid var(--soft);border-color:var(--brand)}
-  .meta-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
-  .q{padding:16px 0;border-top:1px solid var(--line)}
-  .q:first-child{border-top:0}
-  .q-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
-  .section-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:6px}
+  .logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:16px;color:var(--ink-strong)}
+  .logo .badge{background:var(--brand);color:#fff;width:32px;height:32px;border-radius:8px;display:grid;place-items:center;font-size:13px}
+  .tabs{display:flex;background:#fff;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+  .tabs button{border:0;background:#fff;padding:8px 16px;font:inherit;font-weight:600;color:var(--muted);cursor:pointer;font-size:14px}
+  .tabs button.active{background:var(--brand);color:#fff}
+  .icon-btn{border:1px solid var(--line);background:#fff;border-radius:8px;padding:8px 14px;font:inherit;font-weight:600;
+            color:var(--ink);cursor:pointer;font-size:14px}
+  .icon-btn:hover{background:#f7f7f7}
+
+  /* cards */
+  .card{position:relative;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+        box-shadow:var(--shadow);padding:24px 26px;margin-bottom:16px}
+  .card.eval{border-left:none}
+  .heading-line{border-bottom:1px solid var(--line2);padding-bottom:12px;margin-bottom:0}
+
+  /* editable doc title / instructions */
+  .doc-title{width:100%;border:0;font-size:26px;font-weight:800;color:var(--ink-strong);padding:2px 0 12px;
+             border-bottom:1px solid var(--line2);background:transparent}
+  .doc-title:focus{outline:none;border-bottom-color:var(--brand)}
+  .hint{font-size:12.5px;color:var(--muted);margin:14px 0 2px}
+  .doc-instructions{width:100%;border:0;font-size:16px;color:var(--ink);resize:vertical;min-height:26px;background:transparent;font-family:inherit}
+  .doc-instructions:focus{outline:none}
+
+  .q-title-static{font-size:17px;font-weight:800;color:var(--ink-strong);margin:0 0 12px;padding-bottom:12px;border-bottom:1px solid var(--line2)}
+  .instr-static{font-size:16px;color:var(--ink);margin:0}
+
+  /* right-side controls on each card */
+  .card-controls{position:absolute;top:18px;right:18px;display:flex;flex-direction:column;align-items:flex-end;gap:8px}
+  .ctrl-row{display:flex;gap:8px;align-items:center}
+  .kebab,.arrow,.grip{border:1px solid transparent;background:transparent;color:var(--muted);cursor:pointer;
+        width:30px;height:26px;border-radius:6px;display:grid;place-items:center;font-size:16px;line-height:1}
+  .kebab:hover,.arrow:hover,.grip:hover{background:#f2f2f2;color:var(--ink)}
+  .arrow{border:1px solid var(--line);height:30px;width:34px;font-size:14px}
+  .grip{cursor:grab;font-size:15px;letter-spacing:1px}
+  .req-badge{background:var(--red);color:#fff;width:30px;height:30px;border-radius:6px;display:grid;place-items:center;font-weight:800}
+  .lock{color:var(--muted2);font-size:16px}
+
+  /* eval locked field */
+  .eval-title{font-size:17px;font-weight:800;color:var(--ink-strong);padding-bottom:12px;border-bottom:1px solid var(--line2);margin:0 0 16px}
+  .eval-opt{background:var(--field-bg);border:1px solid var(--line);border-radius:6px;padding:12px 16px;margin:8px 0;color:#6b7075;font-weight:500}
+  .eval-note{font-size:12.5px;color:var(--muted);margin-top:10px}
+  .eval-opt.click{cursor:pointer;color:var(--ink)}
+  .eval-opt.click:hover{border-color:var(--brand)}
+  .eval-opt.sel{background:var(--brand);border-color:var(--brand);color:#fff}
+
+  /* question builder row */
+  .q-label-input{width:calc(100% - 90px);border:0;border-bottom:1px solid var(--line2);font-size:17px;font-weight:800;
+                 color:var(--ink-strong);padding:2px 0 12px;background:transparent}
+  .q-label-input:focus{outline:none;border-bottom-color:var(--brand)}
+  .type-select{margin-top:14px;display:inline-flex;align-items:center;gap:6px;position:relative}
+  .type-select select{appearance:none;border:0;background:transparent;font:inherit;font-size:12px;font-weight:700;
+        letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:4px 22px 4px 0;cursor:pointer}
+  .type-select::after{content:"⌄";position:absolute;right:4px;top:2px;color:var(--muted);pointer-events:none}
+  .opts-edit{margin-top:14px}
+  .opts-edit label{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);display:block;margin-bottom:6px}
+  .opts-edit textarea{width:100%;border:1px solid var(--line);border-radius:6px;padding:8px 10px;font:inherit;min-height:70px;resize:vertical}
+  .score-edit{margin-top:14px;display:flex;gap:16px;flex-wrap:wrap}
+  .score-edit label{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);display:block;margin-bottom:4px}
+  .score-edit input{width:90px;border:1px solid var(--line);border-radius:6px;padding:7px 9px;font:inherit}
+
+  /* kebab menu popover */
+  .menu{position:absolute;top:52px;right:18px;background:#fff;border:1px solid var(--line);border-radius:8px;
+        box-shadow:0 6px 20px rgba(0,0,0,.14);min-width:180px;z-index:20;overflow:hidden}
+  .menu button{display:flex;width:100%;gap:10px;align-items:center;border:0;background:#fff;padding:10px 14px;font:inherit;
+        font-size:14px;text-align:left;cursor:pointer;color:var(--ink)}
+  .menu button:hover{background:#f5f6f8}
+  .menu button.danger{color:var(--red)}
+  .menu .sep{height:1px;background:var(--line2)}
+  .menu .chk{margin-left:auto;color:var(--brand);font-weight:800}
+
+  /* add another question */
+  .add-q{width:100%;border:1px solid var(--line);background:#fff;border-radius:var(--radius);padding:16px;font:inherit;
+         font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink);cursor:pointer;font-size:13px;
+         display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:var(--shadow)}
+  .add-q:hover{background:#fafafa;border-color:var(--muted2)}
+
+  /* fill-mode inputs */
+  .field-label{font-size:15px;font-weight:700;color:var(--ink-strong);display:block;margin-bottom:8px}
+  .field-label .req{color:var(--red);margin-left:3px}
+  .fill input[type=text],.fill input[type=date],.fill textarea,.fill select{
+     width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:6px;font:inherit;background:#fff;color:var(--ink)}
+  .fill textarea{min-height:90px;resize:vertical}
+  .fill input:focus,.fill textarea:focus,.fill select:focus{outline:2px solid #eef0ff;border-color:var(--brand)}
+  .meta-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
   .rating{display:flex;gap:8px;flex-wrap:wrap}
   .rating input{position:absolute;opacity:0;width:0;height:0}
-  .rating label{border:1px solid var(--line);border-radius:8px;padding:8px 14px;min-width:44px;text-align:center;
-                cursor:pointer;font-weight:600;user-select:none}
+  .rating label{border:1px solid var(--line);border-radius:6px;padding:9px 15px;min-width:46px;text-align:center;cursor:pointer;font-weight:700}
   .rating input:checked + label{background:var(--brand);border-color:var(--brand);color:#fff}
-  .rating label:hover{border-color:var(--brand)}
   .pills{display:flex;gap:8px;flex-wrap:wrap}
-  .pills label{border:1px solid var(--line);border-radius:20px;padding:7px 16px;cursor:pointer;font-weight:600}
   .pills input{position:absolute;opacity:0;width:0;height:0}
-  .pills input:checked + label{background:var(--ok);border-color:var(--ok);color:#fff}
-  .pills.rec input:checked + label{background:var(--brand);border-color:var(--brand)}
+  .pills label{border:1px solid var(--line);border-radius:20px;padding:8px 18px;cursor:pointer;font-weight:600}
+  .pills input:checked + label{background:var(--brand);border-color:var(--brand);color:#fff}
   .check-list label{display:flex;align-items:center;gap:9px;padding:5px 0;font-weight:500;cursor:pointer}
-  .builder-badge{display:inline-flex;align-items:center;gap:6px;background:#fffbeb;color:#92400e;border:1px solid #fde68a;
-                 padding:4px 10px;border-radius:20px;font-size:12px;font-weight:700}
-  .q-editrow{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px;padding-top:10px;border-top:1px dashed var(--line)}
-  .q-editrow input,.q-editrow select{width:auto;flex:1;min-width:120px}
+
+  .footer-bar{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);
+              padding:14px 18px;display:flex;gap:12px;justify-content:flex-end;align-items:center;z-index:15}
+  .footer-inner{max-width:940px;margin:0 auto;width:100%;display:flex;gap:12px;justify-content:flex-end;align-items:center}
+  .score-chip{background:#eef0ff;color:var(--brand-dark);font-weight:700;border-radius:8px;padding:9px 15px;margin-right:auto}
+  button.primary{background:var(--brand);border:1px solid var(--brand);color:#fff;padding:10px 20px;border-radius:8px;font:inherit;font-weight:700;cursor:pointer}
+  button.primary:hover{background:var(--brand-dark)}
+  button.ghost{background:#fff;border:1px solid var(--line);color:var(--ink);padding:10px 16px;border-radius:8px;font:inherit;font-weight:600;cursor:pointer}
+
+  .dragging{opacity:.45}
+  .drop-target{border-top:2px solid var(--brand)!important}
   .hidden{display:none!important}
-  .footer-bar{position:sticky;bottom:0;background:linear-gradient(180deg,rgba(244,246,249,0),var(--bg) 40%);
-              padding:16px 0 4px;display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
-  .score-chip{background:var(--soft);color:var(--brand-dark);font-weight:700;border-radius:8px;padding:8px 14px}
-  .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#111827;color:#fff;
-         padding:12px 18px;border-radius:10px;box-shadow:var(--shadow);opacity:0;pointer-events:none;transition:.25s;z-index:50;max-width:90vw}
-  .toast.show{opacity:1}
-  .toast.err{background:var(--danger)}
-  .toast.ok{background:var(--ok)}
-  .modal{position:fixed;inset:0;background:rgba(15,23,42,.5);display:none;place-items:center;z-index:40;padding:16px}
+
+  /* toast + modal */
+  .toast{position:fixed;left:50%;bottom:80px;transform:translateX(-50%);background:#222;color:#fff;padding:12px 18px;
+         border-radius:10px;box-shadow:var(--shadow);opacity:0;pointer-events:none;transition:.25s;z-index:60;max-width:90vw;text-align:center}
+  .toast.show{opacity:1}.toast.err{background:var(--red)}.toast.ok{background:var(--ok)}
+  .modal{position:fixed;inset:0;background:rgba(20,20,25,.5);display:none;place-items:center;z-index:50;padding:16px}
   .modal.show{display:grid}
-  .modal .card{max-width:560px;width:100%;margin:0;max-height:86vh;overflow:auto}
+  .modal .card{max-width:560px;width:100%;margin:0;max-height:88vh;overflow:auto}
+  .modal .card .field-label{margin-top:14px}
+  .modal input[type=text],.modal textarea{width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:6px;font:inherit}
   .row-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-  .tag{font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
-  .drag{cursor:grab;color:var(--muted);padding:0 4px}
-  .settings-grid{display:grid;grid-template-columns:1fr;gap:12px}
-  code{background:#f1f5f9;padding:2px 6px;border-radius:5px;font-size:13px}
-  .req-list{font-size:13px;color:var(--muted)}
-  @media(max-width:560px){.row-2{grid-template-columns:1fr}}
+  @media(max-width:560px){.row-2{grid-template-columns:1fr}.card{padding:20px 18px}}
 </style>
 </head>
 <body>
 <div class="wrap">
   <header class="app">
-    <div class="logo"><span class="badge">MB</span> <span id="brandName">MSBU · Interview Feedback</span></div>
-    <div class="toolbar">
-      <span id="builderFlag" class="builder-badge hidden">✎ Builder mode</span>
-      <button id="btnBuilder" class="ghost">Edit form</button>
-      <button id="btnSettings" class="ghost">Settings</button>
+    <div class="logo"><span class="badge">MB</span> <span id="brandName">MSBU</span></div>
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+      <div class="tabs">
+        <button id="tabEdit" class="active">Edit form</button>
+        <button id="tabFill">Preview &amp; fill</button>
+      </div>
+      <button id="btnSettings" class="icon-btn">Settings</button>
     </div>
   </header>
 
-  <!-- ===== Candidate / interview metadata ===== -->
-  <div class="card">
-    <h1 id="formTitle">Interview Feedback Form</h1>
-    <p id="formSubtitle" class="desc">Complete after the interview. Fields marked <span style="color:var(--danger)">*</span> are required.</p>
-    <div class="meta-grid" id="metaGrid" style="margin-top:16px"></div>
-  </div>
-
-  <!-- ===== Dynamic sections render here ===== -->
-  <div id="sections"></div>
-
-  <!-- ===== Overall recommendation ===== -->
-  <div class="card">
-    <div class="section-head">
-      <div>
-        <span class="tag">Decision</span>
-        <h2 class="section-title">Overall recommendation <span class="req" style="color:var(--danger)">*</span></h2>
-        <p class="desc">Your hiring recommendation for this candidate.</p>
-      </div>
-    </div>
-    <div class="pills rec" id="recPills" style="margin-top:10px"></div>
-    <div style="margin-top:16px">
-      <label class="field">Summary / additional comments</label>
-      <textarea id="overallComments" placeholder="Key strengths, concerns, and rationale for your recommendation…"></textarea>
-    </div>
-  </div>
-
-  <div class="footer-bar">
-    <span class="score-chip" id="scoreChip">Score: 0</span>
-    <button id="btnReset" class="ghost">Clear</button>
-    <button id="btnSubmit" class="primary">Submit feedback</button>
-  </div>
+  <div id="stage"></div>
 </div>
 
-<!-- ===== Builder: add-question modal ===== -->
-<div class="modal" id="qModal">
-  <div class="card">
-    <h2 style="margin-top:0" id="qModalTitle">Add question</h2>
-    <div class="settings-grid">
-      <div>
-        <label class="field">Question label</label>
-        <input type="text" id="qLabel" placeholder="e.g. Technical problem-solving" />
-      </div>
-      <div class="row-2">
-        <div>
-          <label class="field">Type</label>
-          <select id="qType">
-            <option value="scorecard">Scorecard (1–N rating)</option>
-            <option value="rating">Rating (1–N)</option>
-            <option value="textarea">Long text</option>
-            <option value="text">Short text</option>
-            <option value="yesno">Yes / No</option>
-            <option value="dropdown">Dropdown</option>
-            <option value="multiple">Multiple choice (single)</option>
-            <option value="checkbox">Checkboxes (multi)</option>
-          </select>
-        </div>
-        <div>
-          <label class="field">Required?</label>
-          <select id="qRequired"><option value="no">No</option><option value="yes">Yes</option></select>
-        </div>
-      </div>
-      <div class="row-2" id="scaleWrap">
-        <div>
-          <label class="field">Max score (scale)</label>
-          <input type="number" id="qScale" value="5" min="2" max="10" />
-        </div>
-        <div>
-          <label class="field">Weight (for scoring)</label>
-          <input type="number" id="qWeight" value="1" min="0" max="10" step="0.5" />
-        </div>
-      </div>
-      <div id="optsWrap" class="hidden">
-        <label class="field">Options (one per line)</label>
-        <textarea id="qOptions" placeholder="Option A&#10;Option B&#10;Option C"></textarea>
-      </div>
-    </div>
-    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:18px">
-      <button class="ghost" data-close-modal="qModal">Cancel</button>
-      <button class="primary" id="qSave">Save question</button>
-    </div>
-  </div>
-</div>
-
-<!-- ===== Settings modal ===== -->
+<!-- Settings modal -->
 <div class="modal" id="settingsModal">
   <div class="card">
-    <h2 style="margin-top:0">Settings</h2>
-    <div class="settings-grid">
-      <div>
-        <label class="field">Form title</label>
-        <input type="text" id="setTitle" />
-      </div>
-      <div>
-        <label class="field">Subtitle / instructions</label>
-        <input type="text" id="setSubtitle" />
-      </div>
-      <div>
-        <label class="field">Recommendation options (one per line)</label>
-        <textarea id="setRec"></textarea>
-      </div>
-      <div>
-        <label class="field">Email recipients (comma separated)</label>
-        <input type="text" id="setRecipients" />
-      </div>
-      <div>
-        <label class="field">Backend URL (Google Apps Script Web App)</label>
-        <input type="text" id="setEndpoint" placeholder="https://script.google.com/macros/s/……/exec" />
-        <p class="req-list" style="margin-top:6px">Leave blank to fall back to Excel download + email draft. See README for setup.</p>
-      </div>
-      <div class="row-2">
-        <div>
-          <label class="field">Builder passcode</label>
-          <input type="text" id="setPass" placeholder="protects Edit form" />
-        </div>
-        <div>
-          <label class="field">Company / brand label</label>
-          <input type="text" id="setBrand" />
-        </div>
-      </div>
-    </div>
+    <h2 style="margin:0 0 4px">Settings</h2>
+    <p class="hint" style="margin:0 0 8px">Recipients, backend, candidate fields, and the evaluation scale.</p>
+
+    <label class="field-label">Email recipients (comma separated)</label>
+    <input type="text" id="setRecipients" />
+
+    <label class="field-label">Backend URL (Google Apps Script Web App)</label>
+    <input type="text" id="setEndpoint" placeholder="https://script.google.com/macros/s/……/exec" />
+    <p class="hint">Leave blank to fall back to Excel download + email draft.</p>
+
+    <label class="field-label">Candidate detail fields (one per line — shown in Preview &amp; fill)</label>
+    <textarea id="setMeta" placeholder="Candidate name*&#10;Position applied for*&#10;Interview stage&#10;Interviewer name*&#10;Interview date:date*"></textarea>
+    <p class="hint">Add <code>*</code> for required, <code>:date</code> for a date picker. e.g. <code>Interview date:date*</code></p>
+
+    <label class="field-label">Evaluation scale (one per line, <code>score | label</code>)</label>
+    <textarea id="setEval" placeholder="4 | Strong Hire&#10;3 | Hire&#10;2 | No Hire&#10;1 | Strong No Hire"></textarea>
+
+    <label class="field-label">Company / brand label</label>
+    <input type="text" id="setBrand" />
+
     <div style="display:flex;gap:8px;justify-content:space-between;margin-top:18px;flex-wrap:wrap">
       <div style="display:flex;gap:8px">
-        <button class="ghost sm" id="btnExportCfg">Export config</button>
-        <button class="ghost sm" id="btnImportCfg">Import config</button>
-        <button class="danger sm" id="btnFactory">Reset to default</button>
+        <button class="ghost" id="btnExportCfg">Export config</button>
+        <button class="ghost" id="btnImportCfg">Import config</button>
+        <button class="ghost" id="btnFactory" style="color:var(--red);border-color:#f5c6c3">Reset default</button>
       </div>
       <div style="display:flex;gap:8px">
-        <button class="ghost" data-close-modal="settingsModal">Close</button>
-        <button class="primary" id="setSave">Save settings</button>
+        <button class="ghost" data-close="settingsModal">Close</button>
+        <button class="primary" id="setSave">Save</button>
       </div>
     </div>
     <input type="file" id="importFile" accept="application/json" class="hidden" />
@@ -232,406 +194,405 @@
 
 <script>
 "use strict";
-/* ============================================================
-   MSBU Interview Feedback Form
-   - Fully client-side, flexible form builder (add/update/delete)
-   - Config persisted in localStorage
-   - On submit: POST to Google Apps Script  ->  Google Sheet + email
-   - Fallback: download .xlsx-compatible file + open email draft
-   ============================================================ */
+/* ======================================================================
+   MSBU Hiring Manager Feedback Form  —  Lever-style inline builder
+   • Edit form  : inline add / edit / delete / reorder questions + type dropdown
+   • Preview & fill : answerable form -> POST to Apps Script (Sheet + email)
+   ====================================================================== */
 
-const STORE_KEY = "msbu_feedback_config_v1";
+const STORE_KEY = "msbu_feedback_config_v2";
 const uid = () => "id" + Math.random().toString(36).slice(2, 9);
+const $  = (s,r=document)=>r.querySelector(s);
+const $$ = (s,r=document)=>[...r.querySelectorAll(s)];
 
-/* ---------- default configuration (editable in Builder/Settings) ---------- */
+const TYPES = [
+  {v:"paragraph", label:"Text (Paragraph)"},
+  {v:"single",    label:"Text (Single line)"},
+  {v:"score",     label:"Score"},
+  {v:"yesno",     label:"Yes / No"},
+  {v:"dropdown",  label:"Dropdown"},
+  {v:"multiple",  label:"Multiple choice"},
+  {v:"checkbox",  label:"Checkboxes"},
+];
+const typeLabel = v => (TYPES.find(t=>t.v===v)||{}).label || v;
+const NEEDS_OPTS = t => ["dropdown","multiple","checkbox"].includes(t);
+const IS_SCORE   = t => t==="score";
+
+/* ---------------- default config (matches the Lever example) ---------------- */
 function defaultConfig(){
   return {
-    brand: "MSBU · Interview Feedback",
-    title: "Interview Feedback Form",
-    subtitle: "Complete after the interview. Fields marked * are required.",
-    recipients: "erika@msbukonsultan.id, hr@msbu.co.id, e@msbu.co.id",
-    endpoint: "",              // Apps Script /exec URL
-    builderPass: "msbu",       // change in Settings
-    recommendation: ["Strong Yes","Yes","No","Strong No"],
-    meta: [
-      {id:uid(), key:"candidate", label:"Candidate name", type:"text", required:true},
-      {id:uid(), key:"position",  label:"Position applied for", type:"text", required:true},
-      {id:uid(), key:"stage",     label:"Interview stage", type:"text", required:false},
-      {id:uid(), key:"interviewer",label:"Interviewer name", type:"text", required:true},
-      {id:uid(), key:"date",      label:"Interview date", type:"date", required:true},
+    brand:"MSBU",
+    title:"Hiring Manager Feedback Form",
+    instructions:"This is an initial call to discover more about the candidate and assess for team fit.",
+    recipients:"erika@msbukonsultan.id, hr@msbu.co.id, e@msbu.co.id",
+    endpoint:"",
+    meta:[
+      {label:"Candidate name", required:true, type:"text"},
+      {label:"Position applied for", required:true, type:"text"},
+      {label:"Interview stage", required:false, type:"text"},
+      {label:"Interviewer name", required:true, type:"text"},
+      {label:"Interview date", required:true, type:"date"},
     ],
-    sections: [
-      {
-        id:uid(), title:"Competency scorecard",
-        desc:"Rate each competency from 1 (poor) to 5 (excellent).",
-        questions:[
-          {id:uid(), type:"scorecard", label:"Technical / role skills", required:true, scale:5, weight:1},
-          {id:uid(), type:"scorecard", label:"Problem solving", required:true, scale:5, weight:1},
-          {id:uid(), type:"scorecard", label:"Communication", required:true, scale:5, weight:1},
-          {id:uid(), type:"scorecard", label:"Culture / values fit", required:true, scale:5, weight:1},
-        ]
-      },
-      {
-        id:uid(), title:"Detailed feedback",
-        desc:"Qualitative notes from the interview.",
-        questions:[
-          {id:uid(), type:"textarea", label:"Key strengths", required:true},
-          {id:uid(), type:"textarea", label:"Concerns / areas to probe further", required:false},
-          {id:uid(), type:"yesno",    label:"Would you want this person on your team?", required:false},
-        ]
-      }
+    evaluation:{
+      label:"Your evaluation",
+      options:[
+        {score:4,label:"Strong Hire"},
+        {score:3,label:"Hire"},
+        {score:2,label:"No Hire"},
+        {score:1,label:"Strong No Hire"},
+      ]
+    },
+    questions:[
+      {id:uid(), label:"Will this candidate raise the bar for the team?", type:"paragraph", required:false},
+      {id:uid(), label:"Describe the most challenging project you've worked on.", type:"paragraph", required:false},
+      {id:uid(), label:"Technical question #1", type:"paragraph", required:false},
+      {id:uid(), label:"Technical question #2", type:"paragraph", required:false},
+      {id:uid(), label:"What excites you about our team and why?", type:"single", required:false},
+      {id:uid(), label:"Do you have any lingering questions for this candidate?", type:"paragraph", required:false},
+      {id:uid(), label:"General comments", type:"paragraph", required:false},
     ]
   };
 }
 
-/* ---------- state ---------- */
 let cfg = load();
-let builder = false;
+let mode = "edit";          // "edit" | "fill"
+let openMenuFor = null;     // question id whose kebab menu is open
 
-function load(){
-  try{ const raw = localStorage.getItem(STORE_KEY); if(raw) return JSON.parse(raw); }catch(e){}
-  return defaultConfig();
-}
+function load(){ try{ const r=localStorage.getItem(STORE_KEY); if(r) return JSON.parse(r);}catch(e){} return defaultConfig(); }
 function save(){ localStorage.setItem(STORE_KEY, JSON.stringify(cfg)); }
-
-/* ---------- helpers ---------- */
-const $ = (s,r=document)=>r.querySelector(s);
-const $$ = (s,r=document)=>[...r.querySelectorAll(s)];
-function toast(msg,kind=""){ const t=$("#toast"); t.textContent=msg; t.className="toast show "+kind; setTimeout(()=>t.className="toast",2600); }
+function toast(m,k=""){ const t=$("#toast"); t.textContent=m; t.className="toast show "+k; clearTimeout(toast._t); toast._t=setTimeout(()=>t.className="toast",2800); }
 function esc(s){ return String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
-const NEEDS_OPTS = t => ["dropdown","multiple","checkbox"].includes(t);
-const IS_SCALE   = t => ["scorecard","rating"].includes(t);
 
-/* ============================================================
+/* ====================================================================
    RENDER
-   ============================================================ */
+   ==================================================================== */
 function render(){
   $("#brandName").textContent = cfg.brand;
-  $("#formTitle").textContent = cfg.title;
-  $("#formSubtitle").innerHTML = esc(cfg.subtitle).replace(/\*/g,'<span style="color:var(--danger)">*</span>');
-  $("#builderFlag").classList.toggle("hidden", !builder);
-  $("#btnBuilder").textContent = builder ? "Done editing" : "Edit form";
+  $("#tabEdit").classList.toggle("active", mode==="edit");
+  $("#tabFill").classList.toggle("active", mode==="fill");
+  mode==="edit" ? renderBuilder() : renderFill();
+}
 
-  renderMeta();
-  renderSections();
-  renderRec();
+/* ---------------- BUILDER (edit form) ---------------- */
+function renderBuilder(){
+  const stage=$("#stage"); stage.className="";
+  stage.innerHTML = `
+    <div class="card">
+      <input class="doc-title" id="docTitle" value="${esc(cfg.title)}" />
+      <div class="hint">Instructions for interviewers</div>
+      <textarea class="doc-instructions" id="docInstr" rows="1">${esc(cfg.instructions)}</textarea>
+    </div>
+
+    <div class="card eval">
+      <div class="card-controls">
+        <div class="ctrl-row"><span class="req-badge">*</span><span class="lock" title="Locked field">🔒</span></div>
+      </div>
+      <div class="eval-title">${esc(cfg.evaluation.label)}</div>
+      ${cfg.evaluation.options.map(o=>`<div class="eval-opt">${o.score} - ${esc(o.label)}</div>`).join("")}
+      <div class="eval-note">This is the overall score field and cannot be edited.</div>
+    </div>
+
+    <div id="qcards"></div>
+
+    <button class="add-q" id="addQ">＋ Add another question</button>
+  `;
+
+  const host=$("#qcards");
+  cfg.questions.forEach((q,i)=>host.appendChild(builderCard(q,i)));
+
+  // wire top card
+  $("#docTitle").addEventListener("input",e=>{ cfg.title=e.target.value; save(); });
+  const instr=$("#docInstr");
+  autoGrow(instr); instr.addEventListener("input",e=>{ cfg.instructions=e.target.value; autoGrow(instr); save(); });
+  $("#addQ").addEventListener("click",addQuestion);
+}
+
+function builderCard(q,idx){
+  const card=document.createElement("div");
+  card.className="card q-card"; card.dataset.idx=idx; card.dataset.id=q.id;
+  card.innerHTML = `
+    <div class="card-controls">
+      <button class="kebab" data-kebab="${q.id}" title="More">⋯</button>
+      <div class="ctrl-row">
+        <span class="grip" title="Drag to reorder" draggable="true">⠿</span>
+      </div>
+      <div class="ctrl-row">
+        <button class="arrow" data-up="${idx}" title="Move up">↑</button>
+      </div>
+      <div class="ctrl-row">
+        <button class="arrow" data-down="${idx}" title="Move down">↓</button>
+      </div>
+    </div>
+
+    <input class="q-label-input" data-label="${q.id}" value="${esc(q.label)}" placeholder="Type your question ..." />
+
+    <div class="type-select">
+      <select data-type="${q.id}">
+        ${TYPES.map(t=>`<option value="${t.v}" ${t.v===q.type?"selected":""}>${t.label}</option>`).join("")}
+      </select>
+    </div>
+
+    ${IS_SCORE(q.type)?`
+      <div class="score-edit">
+        <div><label>Max score</label><input type="number" min="2" max="10" value="${q.scale||5}" data-scale="${q.id}"></div>
+        <div><label>Weight</label><input type="number" min="0" max="10" step="0.5" value="${q.weight||1}" data-weight="${q.id}"></div>
+      </div>`:""}
+
+    ${NEEDS_OPTS(q.type)?`
+      <div class="opts-edit">
+        <label>Options (one per line)</label>
+        <textarea data-opts="${q.id}" placeholder="Option A&#10;Option B">${esc((q.options||[]).join("\n"))}</textarea>
+      </div>`:""}
+
+    ${q.required?`<div class="hint" style="margin-top:12px;color:var(--red)">Required</div>`:""}
+
+    ${openMenuFor===q.id?kebabMenu(q):""}
+  `;
+  return card;
+}
+
+function kebabMenu(q){
+  return `<div class="menu" data-menu="${q.id}">
+    <button data-act="require" data-id="${q.id}">Required ${q.required?'<span class="chk">✓</span>':''}</button>
+    <button data-act="duplicate" data-id="${q.id}">Duplicate</button>
+    <div class="sep"></div>
+    <button class="danger" data-act="delete" data-id="${q.id}">Delete question</button>
+  </div>`;
+}
+
+/* ---------------- FILL (preview & answer) ---------------- */
+function renderFill(){
+  const stage=$("#stage"); stage.className="fill";
+  const metaHtml = cfg.meta.map(m=>`
+    <div>
+      <label class="field-label">${esc(m.label)}${m.required?'<span class="req">*</span>':''}</label>
+      <input type="${m.type==='date'?'date':'text'}" data-meta="${esc(m.label)}" />
+    </div>`).join("");
+
+  const evalHtml = cfg.evaluation.options.map((o,i)=>`
+    <div class="eval-opt click" data-evalpick="${o.score}|${esc(o.label)}">${o.score} - ${esc(o.label)}</div>`).join("");
+
+  stage.innerHTML = `
+    <div class="card">
+      <h1 class="q-title-static" style="font-size:24px">${esc(cfg.title)}</h1>
+      <p class="instr-static">${esc(cfg.instructions)}</p>
+    </div>
+
+    <div class="card">
+      <div class="q-title-static">Candidate details</div>
+      <div class="meta-grid">${metaHtml}</div>
+    </div>
+
+    <div class="card">
+      <div class="q-title-static">${esc(cfg.evaluation.label)} <span class="req" style="color:var(--red)">*</span></div>
+      <div id="evalPick">${evalHtml}</div>
+      <input type="hidden" id="evalValue" />
+    </div>
+
+    <div id="fillQuestions"></div>
+  `;
+
+  const fq=$("#fillQuestions");
+  cfg.questions.forEach(q=>fq.appendChild(fillCard(q)));
+
+  // eval picker
+  $$("#evalPick .eval-opt").forEach(el=>el.addEventListener("click",()=>{
+    $$("#evalPick .eval-opt").forEach(x=>x.classList.remove("sel"));
+    el.classList.add("sel"); $("#evalValue").value=el.dataset.evalpick; updateScore();
+  }));
+
+  ensureFooter();
   updateScore();
 }
 
-function renderMeta(){
-  const g = $("#metaGrid"); g.innerHTML = "";
-  cfg.meta.forEach(m=>{
-    const wrap=document.createElement("div");
-    wrap.innerHTML = `<label class="field">${esc(m.label)}${m.required?'<span class="req">*</span>':''}</label>
-      <input type="${m.type==='date'?'date':'text'}" data-meta="${m.key}" />`;
-    g.appendChild(wrap);
-  });
+function fillCard(q){
+  const c=document.createElement("div"); c.className="card";
+  const name="q_"+q.id; let control="";
+  if(q.type==="paragraph") control=`<textarea data-q="${q.id}" placeholder="Type your answer…"></textarea>`;
+  else if(q.type==="single") control=`<input type="text" data-q="${q.id}" />`;
+  else if(q.type==="score"){ const s=q.scale||5; let p=""; for(let n=1;n<=s;n++) p+=`<input type="radio" id="${name}_${n}" name="${name}" value="${n}" data-q="${q.id}" data-weight="${q.weight||1}" class="scoreInput"><label for="${name}_${n}">${n}</label>`; control=`<div class="rating">${p}</div>`; }
+  else if(q.type==="yesno") control=`<div class="pills"><input type="radio" id="${name}_y" name="${name}" value="Yes" data-q="${q.id}"><label for="${name}_y">Yes</label><input type="radio" id="${name}_n" name="${name}" value="No" data-q="${q.id}"><label for="${name}_n">No</label></div>`;
+  else if(q.type==="dropdown") control=`<select data-q="${q.id}"><option value="">— select —</option>${(q.options||[]).map(o=>`<option>${esc(o)}</option>`).join("")}</select>`;
+  else if(q.type==="multiple") control=`<div class="pills">${(q.options||[]).map((o,i)=>`<input type="radio" id="${name}_${i}" name="${name}" value="${esc(o)}" data-q="${q.id}"><label for="${name}_${i}">${esc(o)}</label>`).join("")}</div>`;
+  else if(q.type==="checkbox") control=`<div class="check-list">${(q.options||[]).map((o,i)=>`<label><input type="checkbox" data-q="${q.id}" value="${esc(o)}">${esc(o)}</label>`).join("")}</div>`;
+
+  c.innerHTML = `<label class="field-label">${esc(q.label)}${q.required?'<span class="req">*</span>':''}${IS_SCORE(q.type)?` <span class="hint" style="display:inline">(1–${q.scale||5})</span>`:""}</label>${control}`;
+  return c;
 }
 
-function renderSections(){
-  const host = $("#sections"); host.innerHTML="";
-  cfg.sections.forEach((sec,si)=>{
-    const card=document.createElement("div"); card.className="card";
-    card.innerHTML = `
-      <div class="section-head">
-        <div style="flex:1">
-          ${builder
-            ? `<input type="text" class="sec-title" data-si="${si}" value="${esc(sec.title)}" style="font-weight:700;font-size:16px" />
-               <input type="text" class="sec-desc" data-si="${si}" value="${esc(sec.desc||'')}" placeholder="section description" style="margin-top:6px" />`
-            : `<h2 class="section-title">${esc(sec.title)}</h2>
-               ${sec.desc?`<p class="desc">${esc(sec.desc)}</p>`:''}`}
-        </div>
-        ${builder?`<button class="danger sm" data-del-sec="${si}">Delete section</button>`:''}
-      </div>
-      <div class="q-list" data-si="${si}"></div>
-      ${builder?`<div style="margin-top:14px;display:flex;gap:8px">
-          <button class="sm" data-add-q="${si}">＋ Add question</button>
-        </div>`:''}`;
-    host.appendChild(card);
-    const ql = card.querySelector(".q-list");
-    sec.questions.forEach((q,qi)=> ql.appendChild(renderQuestion(q,si,qi)));
-  });
-
-  if(builder){
-    const add=document.createElement("button");
-    add.className="ghost"; add.textContent="＋ Add section"; add.style.marginBottom="18px";
-    add.onclick=()=>{ cfg.sections.push({id:uid(),title:"New section",desc:"",questions:[]}); save(); render(); };
-    host.appendChild(add);
-  }
+function ensureFooter(){
+  if($("#footerBar")) return;
+  const f=document.createElement("div"); f.className="footer-bar"; f.id="footerBar";
+  f.innerHTML=`<div class="footer-inner">
+      <span class="score-chip" id="scoreChip">Score: n/a</span>
+      <button class="ghost" id="btnClear">Clear</button>
+      <button class="primary" id="btnSubmit">Submit feedback</button>
+    </div>`;
+  document.body.appendChild(f);
+  $("#btnSubmit").addEventListener("click",submitForm);
+  $("#btnClear").addEventListener("click",()=>{ if(confirm("Clear all answers?")) renderFill(); });
 }
+function removeFooter(){ const f=$("#footerBar"); if(f) f.remove(); }
 
-function renderQuestion(q,si,qi){
-  const d=document.createElement("div"); d.className="q";
-  const name = "q_"+q.id;
-  let control="";
-  if(IS_SCALE(q.type)){
-    const scale=q.scale||5; let pills="";
-    for(let n=1;n<=scale;n++) pills+=`<input type="radio" id="${name}_${n}" name="${name}" value="${n}" data-q="${q.id}" data-weight="${q.weight||1}" class="scoreInput"><label for="${name}_${n}">${n}</label>`;
-    control=`<div class="rating">${pills}</div>`;
-  } else if(q.type==="textarea"){
-    control=`<textarea data-q="${q.id}" placeholder="Type your feedback…"></textarea>`;
-  } else if(q.type==="text"){
-    control=`<input type="text" data-q="${q.id}" />`;
-  } else if(q.type==="yesno"){
-    control=`<div class="pills"><input type="radio" id="${name}_y" name="${name}" value="Yes" data-q="${q.id}"><label for="${name}_y">Yes</label>
-             <input type="radio" id="${name}_n" name="${name}" value="No" data-q="${q.id}"><label for="${name}_n">No</label></div>`;
-  } else if(q.type==="dropdown"){
-    control=`<select data-q="${q.id}"><option value="">— select —</option>${(q.options||[]).map(o=>`<option>${esc(o)}</option>`).join("")}</select>`;
-  } else if(q.type==="multiple"){
-    control=`<div class="pills">${(q.options||[]).map((o,i)=>`<input type="radio" id="${name}_${i}" name="${name}" value="${esc(o)}" data-q="${q.id}"><label for="${name}_${i}">${esc(o)}</label>`).join("")}</div>`;
-  } else if(q.type==="checkbox"){
-    control=`<div class="check-list">${(q.options||[]).map((o,i)=>`<label><input type="checkbox" data-q="${q.id}" value="${esc(o)}">${esc(o)}</label>`).join("")}</div>`;
-  }
-
-  d.innerHTML = `
-    <div class="q-head">
-      <label class="field" style="flex:1">${esc(q.label)}${q.required?'<span class="req">*</span>':''}
-        ${IS_SCALE(q.type)?`<span class="muted" style="font-weight:400;font-size:12px"> (1–${q.scale||5}${(q.weight&&q.weight!=1)?', ×'+q.weight:''})</span>`:''}
-      </label>
-      ${builder?`<span class="muted" style="font-size:12px">${q.type}</span>`:''}
-    </div>
-    ${control}
-    ${builder?`<div class="q-editrow">
-        <button class="sm" data-edit-q="${si}:${qi}">Edit</button>
-        <button class="sm" data-up-q="${si}:${qi}">↑</button>
-        <button class="sm" data-down-q="${si}:${qi}">↓</button>
-        <button class="danger sm" data-del-q="${si}:${qi}">Delete</button>
-      </div>`:''}`;
-  return d;
-}
-
-function renderRec(){
-  const host=$("#recPills"); host.innerHTML="";
-  cfg.recommendation.forEach((r,i)=>{
-    host.insertAdjacentHTML("beforeend",
-      `<input type="radio" id="rec_${i}" name="rec" value="${esc(r)}"><label for="rec_${i}">${esc(r)}</label>`);
-  });
-}
-
-/* ============================================================
+/* ====================================================================
    SCORING
-   ============================================================ */
+   ==================================================================== */
 function updateScore(){
-  let total=0, max=0;
-  cfg.sections.forEach(sec=>sec.questions.forEach(q=>{
-    if(!IS_SCALE(q.type)) return;
-    const w=Number(q.weight||1), scale=Number(q.scale||5);
-    max += scale*w;
-    const sel=document.querySelector(`.scoreInput[data-q="${q.id}"]:checked`);
-    if(sel) total += Number(sel.value)*w;
-  }));
-  $("#scoreChip").textContent = max>0 ? `Score: ${total} / ${max}` : "Score: n/a";
+  if(mode!=="fill"){ return; }
+  let total=0,max=0;
+  cfg.questions.forEach(q=>{ if(!IS_SCORE(q.type)) return; const w=+(q.weight||1),s=+(q.scale||5); max+=s*w;
+    const sel=document.querySelector(`.scoreInput[data-q="${q.id}"]:checked`); if(sel) total+=(+sel.value)*w; });
+  const chip=$("#scoreChip"); if(chip) chip.textContent = max>0?`Score: ${total} / ${max}`:"Score: n/a";
 }
-document.addEventListener("change", e=>{ if(e.target.classList.contains("scoreInput")) updateScore(); });
+document.addEventListener("change",e=>{ if(e.target.classList&&e.target.classList.contains("scoreInput")) updateScore(); });
 
-/* ============================================================
-   COLLECT + VALIDATE
-   ============================================================ */
+/* ====================================================================
+   BUILDER ACTIONS
+   ==================================================================== */
+function addQuestion(){
+  cfg.questions.push({id:uid(), label:"", type:"paragraph", required:false});
+  save(); renderBuilder();
+  const cards=$$("#qcards .q-card"); const last=cards[cards.length-1];
+  if(last){ last.scrollIntoView({behavior:"smooth",block:"center"}); const inp=last.querySelector("[data-label]"); if(inp) inp.focus(); }
+}
+
+// live edits (labels, type, options, scale, weight, doc fields already wired)
+document.addEventListener("input",e=>{
+  const t=e.target;
+  if(t.dataset.label!==undefined){ const q=byId(t.dataset.label); if(q){ q.label=t.value; save(); } }
+  else if(t.dataset.opts!==undefined){ const q=byId(t.dataset.opts); if(q){ q.options=t.value.split("\n").map(s=>s.trim()).filter(Boolean); save(); } }
+  else if(t.dataset.scale!==undefined){ const q=byId(t.dataset.scale); if(q){ q.scale=Math.max(2,+t.value||5); save(); } }
+  else if(t.dataset.weight!==undefined){ const q=byId(t.dataset.weight); if(q){ q.weight=+t.value||1; save(); } }
+});
+document.addEventListener("change",e=>{
+  const t=e.target;
+  if(t.dataset.type!==undefined){ const q=byId(t.dataset.type); if(q){ q.type=t.value; if(NEEDS_OPTS(t.value)&&!q.options) q.options=["Option A","Option B"]; if(IS_SCORE(t.value)){ q.scale=q.scale||5; q.weight=q.weight||1;} save(); renderBuilder(); } }
+});
+
+// clicks: kebab, menu actions, reorder arrows
+document.addEventListener("click",e=>{
+  const t=e.target.closest("[data-kebab],[data-act],[data-up],[data-down],[data-close]");
+  // close open menu if clicking elsewhere
+  if(!e.target.closest(".menu") && !e.target.closest("[data-kebab]") && openMenuFor){ openMenuFor=null; renderBuilder(); }
+  if(!t) return;
+  if(t.dataset.close){ $("#"+t.dataset.close).classList.remove("show"); return; }
+  if(t.dataset.kebab!==undefined){ openMenuFor = (openMenuFor===t.dataset.kebab)?null:t.dataset.kebab; renderBuilder(); return; }
+  if(t.dataset.up!==undefined){ moveQ(+t.dataset.up,-1); return; }
+  if(t.dataset.down!==undefined){ moveQ(+t.dataset.down,1); return; }
+  if(t.dataset.act){
+    const id=t.dataset.id, i=cfg.questions.findIndex(q=>q.id===id);
+    if(i<0) return;
+    if(t.dataset.act==="require"){ cfg.questions[i].required=!cfg.questions[i].required; }
+    else if(t.dataset.act==="duplicate"){ const copy=JSON.parse(JSON.stringify(cfg.questions[i])); copy.id=uid(); cfg.questions.splice(i+1,0,copy); }
+    else if(t.dataset.act==="delete"){ if(!confirm("Delete this question?")) return; cfg.questions.splice(i,1); }
+    openMenuFor=null; save(); renderBuilder();
+  }
+});
+function byId(id){ return cfg.questions.find(q=>q.id===id); }
+function moveQ(idx,dir){ const a=cfg.questions,j=idx+dir; if(j<0||j>=a.length) return; [a[idx],a[j]]=[a[j],a[idx]]; save(); renderBuilder(); }
+
+/* ---------- drag & drop reorder ---------- */
+let dragIdx=null;
+document.addEventListener("dragstart",e=>{ const g=e.target.closest(".grip"); if(!g) return; const card=g.closest(".q-card"); dragIdx=+card.dataset.idx; card.classList.add("dragging"); e.dataTransfer.effectAllowed="move"; });
+document.addEventListener("dragend",e=>{ $$(".q-card").forEach(c=>c.classList.remove("dragging","drop-target")); dragIdx=null; });
+document.addEventListener("dragover",e=>{ const card=e.target.closest(".q-card"); if(card&&dragIdx!=null){ e.preventDefault(); $$(".q-card").forEach(c=>c.classList.remove("drop-target")); card.classList.add("drop-target"); } });
+document.addEventListener("drop",e=>{ const card=e.target.closest(".q-card"); if(card&&dragIdx!=null){ e.preventDefault(); const to=+card.dataset.idx; const a=cfg.questions; const [m]=a.splice(dragIdx,1); a.splice(to,0,m); dragIdx=null; save(); renderBuilder(); } });
+
+function autoGrow(el){ el.style.height="auto"; el.style.height=(el.scrollHeight)+"px"; }
+
+/* ====================================================================
+   SUBMIT (fill mode)
+   ==================================================================== */
 function collect(){
-  const data={ meta:{}, answers:[], recommendation:"", overallComments:"", score:null, submittedAt:new Date().toISOString() };
+  const data={meta:{},answers:[],recommendation:"",score:null,submittedAt:new Date().toISOString()};
   const missing=[];
+  cfg.meta.forEach(m=>{ const el=document.querySelector(`[data-meta="${cssEsc(m.label)}"]`); const v=el?el.value.trim():""; data.meta[m.label]=v; if(m.required&&!v) missing.push(m.label); });
 
-  cfg.meta.forEach(m=>{
-    const el=document.querySelector(`[data-meta="${m.key}"]`);
-    const v=el?el.value.trim():"";
-    data.meta[m.label]=v;
-    if(m.required && !v) missing.push(m.label);
-  });
+  const ev=$("#evalValue")?$("#evalValue").value:""; data.recommendation=ev?ev.split("|")[1]:""; data.evalScore=ev?+ev.split("|")[0]:null;
+  if(!data.recommendation) missing.push(cfg.evaluation.label);
 
   let total=0,max=0;
-  cfg.sections.forEach(sec=>sec.questions.forEach(q=>{
+  cfg.questions.forEach(q=>{
     let val="";
-    if(q.type==="checkbox"){
-      val=$$(`input[type=checkbox][data-q="${q.id}"]:checked`).map(c=>c.value).join("; ");
-    } else if(IS_SCALE(q.type) || q.type==="yesno" || q.type==="multiple"){
-      const sel=document.querySelector(`input[data-q="${q.id}"]:checked`);
-      val=sel?sel.value:"";
-    } else {
-      const el=document.querySelector(`[data-q="${q.id}"]`); val=el?el.value.trim():"";
-    }
-    if(q.required && !val) missing.push(q.label);
-    if(IS_SCALE(q.type)){
-      const w=Number(q.weight||1), scale=Number(q.scale||5); max+=scale*w;
-      if(val) total+=Number(val)*w;
-    }
-    data.answers.push({ section:sec.title, question:q.label, type:q.type, value:val });
-  }));
-
-  data.score = max>0 ? {total, max, percent: Math.round(total/max*100)} : null;
-
-  const rec=document.querySelector('input[name="rec"]:checked');
-  data.recommendation = rec?rec.value:"";
-  if(!data.recommendation) missing.push("Overall recommendation");
-  data.overallComments = $("#overallComments").value.trim();
-
-  return {data, missing};
+    if(q.type==="checkbox") val=$$(`input[type=checkbox][data-q="${q.id}"]:checked`).map(c=>c.value).join("; ");
+    else if(IS_SCORE(q.type)||q.type==="yesno"||q.type==="multiple"){ const s=document.querySelector(`input[data-q="${q.id}"]:checked`); val=s?s.value:""; }
+    else { const el=document.querySelector(`[data-q="${q.id}"]`); val=el?el.value.trim():""; }
+    if(q.required&&!val) missing.push(q.label||"(untitled)");
+    if(IS_SCORE(q.type)){ const w=+(q.weight||1),s=+(q.scale||5); max+=s*w; if(val) total+=(+val)*w; }
+    data.answers.push({section:"", question:q.label, type:q.type, value:val});
+  });
+  data.score = max>0?{total,max,percent:Math.round(total/max*100)}:null;
+  return {data,missing};
 }
+function cssEsc(s){ return String(s).replace(/"/g,'\\"'); }
 
-/* ============================================================
-   SUBMIT
-   ============================================================ */
 async function submitForm(){
-  const {data, missing}=collect();
-  if(missing.length){
-    toast("Please complete: "+missing.slice(0,3).join(", ")+(missing.length>3?` +${missing.length-3} more`:""), "err");
-    return;
-  }
-  const payload={
-    ...data,
-    formTitle: cfg.title,
-    recipients: cfg.recipients.split(",").map(s=>s.trim()).filter(Boolean)
-  };
+  const {data,missing}=collect();
+  if(missing.length){ toast("Please complete: "+missing.slice(0,3).join(", ")+(missing.length>3?` +${missing.length-3} more`:""),"err"); return; }
+  const payload={...data, formTitle:cfg.title, recipients:cfg.recipients.split(",").map(s=>s.trim()).filter(Boolean)};
 
   if(cfg.endpoint){
-    const btn=$("#btnSubmit"); btn.disabled=true; btn.textContent="Submitting…";
+    const b=$("#btnSubmit"); b.disabled=true; b.textContent="Submitting…";
     try{
-      // text/plain avoids CORS preflight against Apps Script
-      await fetch(cfg.endpoint,{method:"POST",mode:"no-cors",
-        headers:{"Content-Type":"text/plain;charset=utf-8"},
-        body:JSON.stringify(payload)});
-      toast("Submitted — saved to Google Sheet & emailed to the team ✔","ok");
-      resetInputs();
-    }catch(err){
-      toast("Network error — downloading a backup copy instead","err");
-      downloadBackup(payload);
-    }finally{ btn.disabled=false; btn.textContent="Submit feedback"; }
+      await fetch(cfg.endpoint,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(payload)});
+      toast("Submitted — saved to Google Sheet & emailed the team ✔","ok"); renderFill();
+    }catch(err){ toast("Network error — downloading a backup copy","err"); downloadBackup(payload); }
+    finally{ b.disabled=false; b.textContent="Submit feedback"; }
   } else {
-    // No backend configured: fallback that still gets the data to the recipients
-    downloadBackup(payload);
-    openMailDraft(payload);
-    toast("No backend set — downloaded a file & opened an email draft. See README to enable auto-Sheet+email.","");
+    downloadBackup(payload); openMailDraft(payload);
+    toast("No backend set — downloaded a file & opened an email draft. See README to enable auto Sheet+email.","");
   }
 }
-
-/* ---------- fallback: Excel-openable file (CSV, opens in Google Sheets/Excel) ---------- */
 function downloadBackup(p){
   const rows=[["Field","Value"]];
   Object.entries(p.meta).forEach(([k,v])=>rows.push([k,v]));
-  rows.push(["Overall recommendation",p.recommendation]);
+  rows.push([cfg.evaluation.label,p.recommendation]);
   if(p.score) rows.push(["Score",`${p.score.total}/${p.score.max} (${p.score.percent}%)`]);
-  p.answers.forEach(a=>rows.push([`[${a.section}] ${a.question}`,a.value]));
-  rows.push(["Summary comments",p.overallComments]);
+  p.answers.forEach(a=>rows.push([a.question,a.value]));
   rows.push(["Submitted at",p.submittedAt]);
   const csv=rows.map(r=>r.map(c=>`"${String(c??"").replace(/"/g,'""')}"`).join(",")).join("\r\n");
   const blob=new Blob(["﻿"+csv],{type:"text/csv;charset=utf-8"});
-  const name=`Feedback_${(p.meta[Object.keys(p.meta)[0]]||"candidate").replace(/\W+/g,"_")}_${p.submittedAt.slice(0,10)}.csv`;
-  const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=name; a.click();
+  const first=p.meta[Object.keys(p.meta)[0]]||"candidate";
+  const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=`Feedback_${first.replace(/\W+/g,"_")}_${p.submittedAt.slice(0,10)}.csv`; a.click();
 }
 function openMailDraft(p){
-  const lines=[];
-  Object.entries(p.meta).forEach(([k,v])=>lines.push(`${k}: ${v}`));
-  lines.push(`Overall recommendation: ${p.recommendation}`);
+  const lines=[]; Object.entries(p.meta).forEach(([k,v])=>lines.push(`${k}: ${v}`));
+  lines.push(`${cfg.evaluation.label}: ${p.recommendation}`);
   if(p.score) lines.push(`Score: ${p.score.total}/${p.score.max} (${p.score.percent}%)`);
-  lines.push(""); p.answers.forEach(a=>lines.push(`• ${a.question}: ${a.value}`));
-  if(p.overallComments) lines.push(`\nSummary: ${p.overallComments}`);
+  lines.push(""); p.answers.forEach(a=>{ if(a.value) lines.push(`• ${a.question}: ${a.value}`); });
   const subj=`Interview feedback — ${p.meta[Object.keys(p.meta)[0]]||""}`;
-  const url=`mailto:${encodeURIComponent(p.recipients.join(","))}?subject=${encodeURIComponent(subj)}&body=${encodeURIComponent(lines.join("\n"))}`;
-  window.open(url,"_blank");
-}
-function resetInputs(){
-  $$("[data-meta]").forEach(e=>e.value="");
-  $$("[data-q]").forEach(e=>{ if(e.type==="radio"||e.type==="checkbox") e.checked=false; else e.value=""; });
-  $$('input[name="rec"]').forEach(e=>e.checked=false);
-  $("#overallComments").value=""; updateScore();
+  window.open(`mailto:${encodeURIComponent(p.recipients.join(","))}?subject=${encodeURIComponent(subj)}&body=${encodeURIComponent(lines.join("\n"))}`,"_blank");
 }
 
-/* ============================================================
-   BUILDER actions (add / edit / delete / reorder)
-   ============================================================ */
-let editingRef=null; // {si,qi} or null (add)
+/* ====================================================================
+   TABS + SETTINGS
+   ==================================================================== */
+$("#tabEdit").addEventListener("click",()=>{ mode="edit"; removeFooter(); render(); });
+$("#tabFill").addEventListener("click",()=>{ mode="fill"; render(); });
 
-document.addEventListener("click", e=>{
-  const t=e.target;
-  if(t.dataset.delSec!==undefined){ if(confirm("Delete this whole section?")){ cfg.sections.splice(+t.dataset.delSec,1); save(); render(); } }
-  if(t.dataset.addQ!==undefined){ openQModal(+t.dataset.addQ,null); }
-  if(t.dataset.editQ!==undefined){ const[si,qi]=t.dataset.editQ.split(":").map(Number); openQModal(si,qi); }
-  if(t.dataset.delQ!==undefined){ const[si,qi]=t.dataset.delQ.split(":").map(Number); cfg.sections[si].questions.splice(qi,1); save(); render(); }
-  if(t.dataset.upQ!==undefined){ const[si,qi]=t.dataset.upQ.split(":").map(Number); if(qi>0){ const a=cfg.sections[si].questions; [a[qi-1],a[qi]]=[a[qi],a[qi-1]]; save(); render(); } }
-  if(t.dataset.downQ!==undefined){ const[si,qi]=t.dataset.downQ.split(":").map(Number); const a=cfg.sections[si].questions; if(qi<a.length-1){ [a[qi+1],a[qi]]=[a[qi],a[qi+1]]; save(); render(); } }
-  if(t.dataset.closeModal){ $("#"+t.dataset.closeModal).classList.remove("show"); }
-});
-// live-edit section title/desc
-document.addEventListener("input", e=>{
-  if(e.target.classList.contains("sec-title")) cfg.sections[+e.target.dataset.si].title=e.target.value, save();
-  if(e.target.classList.contains("sec-desc"))  cfg.sections[+e.target.dataset.si].desc=e.target.value, save();
-});
-
-function openQModal(si,qi){
-  editingRef={si,qi};
-  const q = qi!=null ? cfg.sections[si].questions[qi] : null;
-  $("#qModalTitle").textContent = q?"Edit question":"Add question";
-  $("#qLabel").value = q?q.label:"";
-  $("#qType").value = q?q.type:"scorecard";
-  $("#qRequired").value = q&&q.required?"yes":"no";
-  $("#qScale").value = q&&q.scale?q.scale:5;
-  $("#qWeight").value = q&&q.weight?q.weight:1;
-  $("#qOptions").value = q&&q.options?q.options.join("\n"):"";
-  syncQModalFields();
-  $("#qModal").classList.add("show");
-}
-function syncQModalFields(){
-  const t=$("#qType").value;
-  $("#scaleWrap").classList.toggle("hidden",!IS_SCALE(t));
-  $("#optsWrap").classList.toggle("hidden",!NEEDS_OPTS(t));
-}
-$("#qType").addEventListener("change",syncQModalFields);
-$("#qSave").addEventListener("click",()=>{
-  const label=$("#qLabel").value.trim(); if(!label){ toast("Enter a question label","err"); return; }
-  const t=$("#qType").value;
-  const q={ id:(editingRef.qi!=null?cfg.sections[editingRef.si].questions[editingRef.qi].id:uid()),
-            type:t, label, required:$("#qRequired").value==="yes" };
-  if(IS_SCALE(t)){ q.scale=Math.max(2,+$("#qScale").value||5); q.weight=+$("#qWeight").value||1; }
-  if(NEEDS_OPTS(t)) q.options=$("#qOptions").value.split("\n").map(s=>s.trim()).filter(Boolean);
-  if(editingRef.qi!=null) cfg.sections[editingRef.si].questions[editingRef.qi]=q;
-  else cfg.sections[editingRef.si].questions.push(q);
-  save(); $("#qModal").classList.remove("show"); render();
-});
-
-/* ---------- Builder toggle (passcode protected) ---------- */
-$("#btnBuilder").addEventListener("click",()=>{
-  if(builder){ builder=false; render(); return; }
-  const p=prompt("Enter builder passcode to edit the form:");
-  if(p===null) return;
-  if(p===cfg.builderPass){ builder=true; render(); }
-  else toast("Wrong passcode","err");
-});
-
-/* ============================================================
-   SETTINGS
-   ============================================================ */
 $("#btnSettings").addEventListener("click",()=>{
-  $("#setTitle").value=cfg.title; $("#setSubtitle").value=cfg.subtitle;
-  $("#setRec").value=cfg.recommendation.join("\n"); $("#setRecipients").value=cfg.recipients;
-  $("#setEndpoint").value=cfg.endpoint; $("#setPass").value=cfg.builderPass; $("#setBrand").value=cfg.brand;
+  $("#setRecipients").value=cfg.recipients;
+  $("#setEndpoint").value=cfg.endpoint;
+  $("#setBrand").value=cfg.brand;
+  $("#setMeta").value=cfg.meta.map(m=>`${m.label}${m.type==="date"?":date":""}${m.required?"*":""}`).join("\n");
+  $("#setEval").value=cfg.evaluation.options.map(o=>`${o.score} | ${o.label}`).join("\n");
   $("#settingsModal").classList.add("show");
 });
 $("#setSave").addEventListener("click",()=>{
-  cfg.title=$("#setTitle").value.trim()||cfg.title;
-  cfg.subtitle=$("#setSubtitle").value;
-  cfg.recommendation=$("#setRec").value.split("\n").map(s=>s.trim()).filter(Boolean);
   cfg.recipients=$("#setRecipients").value;
   cfg.endpoint=$("#setEndpoint").value.trim();
-  cfg.builderPass=$("#setPass").value.trim()||cfg.builderPass;
   cfg.brand=$("#setBrand").value.trim()||cfg.brand;
+  const metaLines=$("#setMeta").value.split("\n").map(s=>s.trim()).filter(Boolean);
+  if(metaLines.length) cfg.meta=metaLines.map(l=>{ const req=/\*/.test(l); const isDate=/:date/i.test(l); const label=l.replace(/:date/i,"").replace(/\*/g,"").trim(); return {label,required:req,type:isDate?"date":"text"}; });
+  const evLines=$("#setEval").value.split("\n").map(s=>s.trim()).filter(Boolean);
+  if(evLines.length) cfg.evaluation.options=evLines.map(l=>{ const [sc,...rest]=l.split("|"); return {score:parseInt(sc)||0,label:(rest.join("|")||"").trim()}; });
   save(); $("#settingsModal").classList.remove("show"); render(); toast("Settings saved","ok");
 });
-$("#btnExportCfg").addEventListener("click",()=>{
-  const blob=new Blob([JSON.stringify(cfg,null,2)],{type:"application/json"});
-  const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="feedback-form-config.json"; a.click();
-});
+$("#btnExportCfg").addEventListener("click",()=>{ const b=new Blob([JSON.stringify(cfg,null,2)],{type:"application/json"}); const a=document.createElement("a"); a.href=URL.createObjectURL(b); a.download="feedback-form-config.json"; a.click(); });
 $("#btnImportCfg").addEventListener("click",()=>$("#importFile").click());
-$("#importFile").addEventListener("change",ev=>{
-  const f=ev.target.files[0]; if(!f) return;
-  const r=new FileReader(); r.onload=()=>{ try{ cfg=JSON.parse(r.result); save(); render();
-    $("#settingsModal").classList.remove("show"); toast("Config imported","ok"); }catch(e){ toast("Invalid JSON file","err"); } };
-  r.readAsText(f);
-});
-$("#btnFactory").addEventListener("click",()=>{ if(confirm("Reset the entire form to default? This clears your custom questions.")){ cfg=defaultConfig(); save(); render(); $("#settingsModal").classList.remove("show"); } });
-
-/* ---------- misc ---------- */
-$("#btnSubmit").addEventListener("click",submitForm);
-$("#btnReset").addEventListener("click",()=>{ if(confirm("Clear all entered answers?")) resetInputs(); });
-document.querySelectorAll(".modal").forEach(m=>m.addEventListener("click",e=>{ if(e.target===m) m.classList.remove("show"); }));
+$("#importFile").addEventListener("change",ev=>{ const f=ev.target.files[0]; if(!f) return; const r=new FileReader(); r.onload=()=>{ try{ cfg=JSON.parse(r.result); save(); $("#settingsModal").classList.remove("show"); render(); toast("Config imported","ok"); }catch(e){ toast("Invalid JSON","err"); } }; r.readAsText(f); });
+$("#btnFactory").addEventListener("click",()=>{ if(confirm("Reset the entire form to default?")){ cfg=defaultConfig(); save(); $("#settingsModal").classList.remove("show"); render(); } });
+$$(".modal").forEach(m=>m.addEventListener("click",e=>{ if(e.target===m) m.classList.remove("show"); }));
 
 render();
 </script>
