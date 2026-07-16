@@ -22,6 +22,9 @@ var FOLDER_ID       = "";   // Drive folder for per-submission files
 var EMAIL_SUBJECT_PREFIX = "Interview Feedback";
 // Recipients fallback if the form doesn't send any:
 var DEFAULT_RECIPIENTS = "hr@msbu.co.id";
+// Optional: a PUBLIC URL to the MSBU logo (PNG). If set, it shows in the email header;
+// otherwise the email falls back to a clean "M | S | B | U" text wordmark.
+var LOGO_URL = "";
 
 function doPost(e) {
   try {
@@ -60,14 +63,17 @@ function doPost(e) {
     var folder = getFolder();
     if (folder) { folder.addFile(file); DriveApp.getRootFolder().removeFile(file); }
 
-    // ---- email (spreadsheet link only, no attachment) ----
+    // ---- email (branded HTML, link button, no attachment) ----
     var recipients = (payload.recipients && payload.recipients.length)
       ? payload.recipients.join(",") : DEFAULT_RECIPIENTS;
-    MailApp.sendEmail({
+    var logo = getLogoBlob();
+    var mail = {
       to: recipients,
       subject: EMAIL_SUBJECT_PREFIX + " — " + candidate + " (" + (payload.recommendation || "n/a") + ")",
-      htmlBody: buildEmailHtml(payload, perSS.getUrl())
-    });
+      htmlBody: buildEmailHtml(payload, perSS.getUrl(), !!logo)
+    };
+    if (logo) mail.inlineImages = { msbulogo: logo };
+    MailApp.sendEmail(mail);
 
     return json({ ok: true, sheet: perSS.getUrl() });
   } catch (err) {
@@ -249,25 +255,90 @@ function fmtDate(iso) {
   catch (e) { return iso || ""; }
 }
 
-function buildEmailHtml(p, sheetUrl) {
-  var rows = "";
-  Object.keys(p.meta || {}).forEach(function (k) {
-    rows += "<tr><td style='padding:4px 10px;color:#555'>" + k + "</td><td style='padding:4px 10px'><b>" + esc(p.meta[k]) + "</b></td></tr>";
+function getLogoBlob() {
+  if (!LOGO_URL) return null;
+  try { return UrlFetchApp.fetch(LOGO_URL, { muteHttpExceptions: true }).getBlob().setName("logo"); }
+  catch (e) { return null; }
+}
+
+function metaVal(p, label) { return (p.meta && p.meta[label] != null) ? p.meta[label] : ""; }
+
+/* Branded, job-portal-style notification email with a CTA button. */
+function buildEmailHtml(p, sheetUrl, hasLogo) {
+  var NAVY = "#123047", INK = "#3b4652", MUTE = "#8a929c", LINE = "#eceef0", BG = "#f4f5f7";
+
+  var candidate = metaVal(p, "Candidate name") || firstMetaValue(p) || "Candidate";
+  var position  = metaVal(p, "Position applied for");
+  var role      = p.role || "";
+  var initials  = (candidate.split(/\s+/).map(function (w) { return w.charAt(0); }).join("").substring(0, 2) || "?").toUpperCase();
+
+  function sectionHead(t) {
+    return "<p style='margin:22px 0 8px;color:" + NAVY + ";font-weight:bold;font-size:13px;text-transform:uppercase;letter-spacing:.04em'>" + t + "</p>";
+  }
+  function hr() { return "<hr style='border:0;border-top:1px solid " + LINE + ";margin:22px 0'>"; }
+
+  var logo = hasLogo
+    ? "<img src='cid:msbulogo' alt='MSBU' style='height:32px'>"
+    : "<span style='font-size:22px;font-weight:800;letter-spacing:3px;color:" + NAVY + "'>M&nbsp;|&nbsp;S&nbsp;|&nbsp;B&nbsp;|&nbsp;U</span>";
+
+  var scoreTxt = p.score ? (" &nbsp;·&nbsp; Scorecard " + p.score.total + "/" + p.score.max + " (" + p.score.percent + "%)") : "";
+
+  // candidate details
+  var det = "";
+  ["Candidate name", "Position applied for", "Interviewer name", "Interview date"].forEach(function (k) {
+    var v = metaVal(p, k); if (v === "") return;
+    det += "<tr><td style='padding:6px 0;color:" + MUTE + ";width:42%;font-size:14px;vertical-align:top'>" + esc(k) + "</td>"
+         + "<td style='padding:6px 0;color:" + INK + ";font-weight:bold;font-size:14px'>" + esc(v) + "</td></tr>";
   });
-  var ans = "";
-  (p.answers || []).forEach(function (a) {
-    if (!a.value) return;
-    ans += "<tr><td style='padding:4px 10px;color:#555'>" + esc(a.question) + "</td><td style='padding:4px 10px'>" + esc(a.value) + "</td></tr>";
-  });
-  var scoreLine = p.score ? "<p><b>Score:</b> " + p.score.total + "/" + p.score.max + " (" + p.score.percent + "%)</p>" : "";
-  return "<div style='font-family:Arial,sans-serif;color:#1f2933'>"
-    + "<h2 style='margin:0 0 6px'>" + esc(p.formTitle || "Interview Feedback") + "</h2>"
-    + "<p style='margin:0 0 14px'><b>Recommendation:</b> " + esc(p.recommendation || "n/a") + "</p>"
-    + scoreLine
-    + "<table style='border-collapse:collapse;font-size:14px'>" + rows + ans + "</table>"
-    + (p.overallComments ? "<p style='margin-top:14px'><b>Summary:</b><br>" + esc(p.overallComments) + "</p>" : "")
-    + "<p style='margin-top:16px'><a href='" + sheetUrl + "'>Open the Google Sheet for this submission</a></p>"
-    + "<p style='color:#999;font-size:12px'>Full log kept in the master sheet.</p></div>";
+
+  // core competencies
+  var comps = (p.answers || []).filter(function (a) { return a.section; });
+  var compHtml = "";
+  if (comps.length) {
+    compHtml += sectionHead("Core competencies") + "<table width='100%' style='border-collapse:collapse'>";
+    comps.forEach(function (a) {
+      compHtml += "<tr><td style='padding:6px 0;color:" + INK + ";font-size:14px'>" + esc(a.question) + "</td>"
+               + "<td style='padding:6px 0;text-align:right;color:" + NAVY + ";font-weight:bold;font-size:14px'>" + esc(a.value || "—") + "</td></tr>";
+    });
+    compHtml += "</table>";
+  }
+
+  // feedback answers (resume-entry style)
+  var qs = (p.answers || []).filter(function (a) { return !a.section && a.value; });
+  var qHtml = "";
+  if (qs.length) {
+    qHtml += sectionHead("Feedback");
+    qs.forEach(function (a) {
+      qHtml += "<p style='margin:14px 0 4px;color:" + NAVY + ";font-weight:bold;font-size:15px'>" + esc(a.question) + "</p>"
+             + "<p style='margin:0;color:" + INK + ";font-size:14px;line-height:1.6'>" + esc(a.value).replace(/\n/g, "<br>") + "</p>";
+    });
+  }
+
+  return ""
+    + "<div style='background:" + BG + ";padding:28px 12px;font-family:Arial,Helvetica,sans-serif'>"
+      + "<div style='text-align:center;padding:6px 0 20px'>" + logo + "</div>"
+      + "<table align='center' width='600' cellpadding='0' cellspacing='0' style='max-width:600px;width:100%;background:#ffffff;border:1px solid #e6e8eb;border-radius:14px'>"
+        + "<tr><td style='padding:34px 38px'>"
+          + "<div style='text-align:center'>"
+            + "<div style='width:66px;height:66px;border-radius:50%;background:" + NAVY + ";color:#ffffff;font-size:24px;font-weight:bold;line-height:66px'>" + esc(initials) + "</div>"
+          + "</div>"
+          + "<h1 style='text-align:center;color:#5f6b7a;font-size:21px;line-height:1.35;margin:18px 0 4px'>Interview feedback for<br>" + esc(candidate) + "</h1>"
+          + "<p style='text-align:center;color:" + MUTE + ";margin:0;font-size:14px'>" + esc(position || role) + (position && role ? (" &nbsp;·&nbsp; " + esc(role)) : "") + "</p>"
+          + hr()
+          + "<p style='margin:0 0 6px;color:" + NAVY + ";font-weight:bold;font-size:13px;text-transform:uppercase;letter-spacing:.04em'>Recommendation</p>"
+          + "<p style='margin:0;color:" + INK + ";font-size:18px;font-weight:bold'>" + esc(p.recommendation || "—")
+            + "<span style='font-weight:normal;font-size:14px;color:" + MUTE + "'>" + scoreTxt + "</span></p>"
+          + sectionHead("Candidate details")
+          + "<table width='100%' style='border-collapse:collapse'>" + det + "</table>"
+          + compHtml
+          + qHtml
+          + "<div style='text-align:center;padding:30px 0 4px'>"
+            + "<a href='" + sheetUrl + "' style='background:" + NAVY + ";color:#ffffff;text-decoration:none;font-weight:bold;font-size:15px;padding:14px 30px;border-radius:8px;display:inline-block'>View Candidate Feedback Form</a>"
+          + "</div>"
+        + "</td></tr>"
+      + "</table>"
+      + "<p style='text-align:center;color:#aab1b8;font-size:12px;margin:18px 0 0'>MSBU · Interview Feedback &nbsp;·&nbsp; automated notification</p>"
+    + "</div>";
 }
 
 function esc(s) {
