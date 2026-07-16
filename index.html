@@ -524,7 +524,7 @@ function collect(){
     const v=b.comps[it.id];
     if(!nm){ missing.push("Competency name (name each competency, or remove it)"); return; }
     if(!v){ missing.push(nm+" (rating)"); return; }
-    ctot+=v; const th=THUMBS.find(t=>t.v===v)||{}; data.answers.push({section:f.competencies.title, question:nm, type:"scorecard", value:((th.icon?th.icon+" ":"")+(th.label||""))});
+    ctot+=v; const th=THUMBS.find(t=>t.v===v)||{}; data.answers.push({section:f.competencies.title, question:nm, type:"scorecard", value:((th.icon?th.icon+" ":"")+(th.label||"")), desc:(it.desc||"").trim()});
   });
   data.score = cmax?{total:ctot,max:cmax,percent:Math.round(ctot/cmax*100)}:null;
 

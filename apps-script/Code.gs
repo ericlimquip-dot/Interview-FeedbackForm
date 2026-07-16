@@ -120,8 +120,8 @@ function runTest() {
     evalScore: 3,
     score: { total: 10, max: 12, percent: 83 },
     answers: [
-      { section: "Core Competencies", question: "Cross-functional empathy", type: "scorecard", value: "👍 Competent / Meets Expectations" },
-      { section: "Core Competencies", question: "Technical expertise",      type: "scorecard", value: "👍👍 Expert / Exceeds Expectations" },
+      { section: "Core Competencies", question: "Cross-functional empathy", type: "scorecard", value: "👍 Competent / Meets Expectations", desc: "Coordinated well with product and ops during the migration project." },
+      { section: "Core Competencies", question: "Technical expertise",      type: "scorecard", value: "👍👍 Expert / Exceeds Expectations", desc: "Deep Spring Boot knowledge; walked through a clean, scalable design." },
       { section: "Core Competencies", question: "Adaptability",             type: "scorecard", value: "👍 Competent / Meets Expectations" },
       { section: "", question: "Why is the candidate interested in this role?",     type: "paragraph", value: "Wants a bigger backend challenge and to grow into full-stack." },
       { section: "", question: "Summary of relevant experience",                    type: "paragraph", value: "4+ years front-end (React/Redux); moving toward full-stack with Spring Boot." },
@@ -146,7 +146,7 @@ function flatten(p) {
   out["Overall Recommendation"] = p.recommendation || "";
   if (p.score) out["Score"] = p.score.total + "/" + p.score.max + " (" + p.score.percent + "%)";
   (p.answers || []).forEach(function (a) {
-    out["[" + a.section + "] " + a.question] = a.value;
+    out["[" + a.section + "] " + a.question] = a.value + (a.desc ? " — " + a.desc : "");
   });
   out["Summary Comments"] = p.overallComments || "";
   return out;
@@ -230,7 +230,7 @@ function writePerSubmission(sheet, p) {
   head("CANDIDATE DETAILS");
   Object.keys(p.meta || {}).forEach(function (k) { dataRow(k, p.meta[k]); });
   var comps = (p.answers || []).filter(function (a) { return a.section; });
-  if (comps.length) { head("CORE COMPETENCIES"); comps.forEach(function (a) { dataRow(a.question, a.value); }); }
+  if (comps.length) { head("CORE COMPETENCIES"); comps.forEach(function (a) { dataRow(a.question, a.value + (a.desc ? "\n" + a.desc : "")); }); }
   var qs = (p.answers || []).filter(function (a) { return !a.section; });
   if (qs.length) { head("FEEDBACK"); qs.forEach(function (a) { dataRow(a.question, a.value); }); }
   if (comps.length) { head("SCORECARD RATING SCALE"); SCALE.forEach(function (s) { dataRow(s.icon + "  " + s.label, s.desc); }); }
