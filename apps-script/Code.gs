@@ -164,9 +164,9 @@ function formatMaster(sheet) {
   if (lastCol < 1 || lastRow < 1) return;
   var all = sheet.getRange(1, 1, lastRow, lastCol);
   all.setVerticalAlignment("top").setWrap(true).setFontFamily("Arial");
-  try { if (sheet.getBandings().length === 0) all.applyRowBanding(SpreadsheetApp.BandingTheme.LIGHT_GREY, true, false); } catch (e) {}
+  try { if (sheet.getBandings().length === 0) all.applyRowBanding(SpreadsheetApp.BandingTheme.LIGHT_GREEN, true, false); } catch (e) {}
   var header = sheet.getRange(1, 1, 1, lastCol);
-  header.setFontWeight("bold").setFontColor("#ffffff").setBackground("#4244e0").setVerticalAlignment("middle");
+  header.setFontWeight("bold").setFontColor("#ffffff").setBackground("#548235").setVerticalAlignment("middle");
   sheet.setRowHeight(1, 32);
   sheet.setFrozenRows(1);
   sheet.autoResizeColumns(1, lastCol);
@@ -177,48 +177,72 @@ function formatMaster(sheet) {
   }
 }
 
-/* Write one submission as a clean, grouped, bordered sheet. */
+/* Write one submission styled like a clean report template:
+   a big title banner, a summary block with a mini score bar, and green
+   section headers over zebra-striped rows. */
 function writePerSubmission(sheet, p) {
   sheet.setName("Feedback");
   sheet.clear();
-  var rows = [], sectionRows = [];
-  function add(a, b) { rows.push([a, (b === undefined || b === null) ? "" : b]); return rows.length; }
-  function section(t) { sectionRows.push(add(t, "")); }
 
-  add(p.formTitle || "Interview Feedback", "");                 // row 1: title
-  add("Submitted", fmtDate(p.submittedAt));
-  section("CANDIDATE DETAILS");
-  Object.keys(p.meta || {}).forEach(function (k) { add(k, p.meta[k]); });
-  section("EVALUATION");
-  add("Overall recommendation", p.recommendation || "");
-  if (p.score) add("Scorecard", p.score.total + " / " + p.score.max + "  (" + p.score.percent + "%)");
+  var TITLE_BG = "#e2efda", TITLE_TX = "#375623";   // light-green banner / dark-green text
+  var HEAD_BG  = "#548235", HEAD_TX  = "#ffffff";   // dark-green section header
+  var BAND     = "#eaf1df", BORDER   = "#cfe0bd", BAR = "#70ad47";
+
+  var rows = [], kind = [];
+  function push(a, b, k) { rows.push([a, (b == null ? "" : b)]); kind.push(k); return rows.length; }
+  var stripe = 0;
+  function dataRow(a, b) { stripe++; push(a, b, stripe % 2 ? "a" : "b"); }
+  function head(t) { push(t, "", "head"); stripe = 0; }
+
+  push(p.formTitle || "Interview Feedback", "", "title");
+  push("Overall recommendation", p.recommendation || "—", "sum");
+  if (p.score) {
+    var pct = p.score.percent, blocks = Math.max(1, Math.round(pct / 5));  // up to 20 blocks
+    push("Scorecard", p.score.total + " / " + p.score.max + "   (" + pct + "%)   " + rep("█", blocks), "bar");
+  }
+  push("Submitted", fmtDate(p.submittedAt), "meta");
+
+  head("CANDIDATE DETAILS");
+  Object.keys(p.meta || {}).forEach(function (k) { dataRow(k, p.meta[k]); });
   var comps = (p.answers || []).filter(function (a) { return a.section; });
-  if (comps.length) { section("CORE COMPETENCIES"); comps.forEach(function (a) { add(a.question, a.value); }); }
+  if (comps.length) { head("CORE COMPETENCIES"); comps.forEach(function (a) { dataRow(a.question, a.value); }); }
   var qs = (p.answers || []).filter(function (a) { return !a.section; });
-  if (qs.length) { section("FEEDBACK"); qs.forEach(function (a) { add(a.question, a.value); }); }
+  if (qs.length) { head("FEEDBACK"); qs.forEach(function (a) { dataRow(a.question, a.value); }); }
 
   var n = rows.length;
   sheet.getRange(1, 1, n, 2).setValues(rows);
-  sheet.setColumnWidth(1, 260); sheet.setColumnWidth(2, 520);
+  sheet.setColumnWidth(1, 280); sheet.setColumnWidth(2, 540);
   var body = sheet.getRange(1, 1, n, 2);
-  body.setVerticalAlignment("top").setWrap(true).setFontFamily("Arial");
-  body.setBorder(true, true, true, true, true, true, "#e2e2e2", SpreadsheetApp.BorderStyle.SOLID);
+  body.setVerticalAlignment("top").setWrap(true).setFontFamily("Arial").setFontSize(11);
+  body.setBorder(true, true, true, true, true, true, BORDER, SpreadsheetApp.BorderStyle.SOLID);
 
-  // title bar
-  sheet.getRange(1, 1, 1, 2).merge().setFontSize(15).setFontWeight("bold")
-       .setFontColor("#ffffff").setBackground("#4244e0");
-  sheet.setRowHeight(1, 40);
-  sheet.getRange(2, 1, 1, 2).setFontColor("#777777");   // "Submitted" line, subtle
-  // section bars
-  sectionRows.forEach(function (r) {
-    sheet.getRange(r, 1, 1, 2).merge().setFontWeight("bold").setBackground("#eef0ff")
-         .setFontColor("#2b2b2b").setFontSize(11);
-    sheet.setRowHeight(r, 26);
-  });
-  // bold the label column
-  sheet.getRange(1, 1, n, 1).setFontWeight("bold");
+  for (var i = 0; i < n; i++) {
+    var r = i + 1, k = kind[i], rng = sheet.getRange(r, 1, 1, 2);
+    if (k === "title") {
+      rng.merge().setBackground(TITLE_BG).setFontColor(TITLE_TX).setFontSize(22).setFontWeight("bold").setVerticalAlignment("middle");
+      sheet.setRowHeight(r, 56);
+    } else if (k === "head") {
+      rng.merge().setBackground(HEAD_BG).setFontColor(HEAD_TX).setFontWeight("bold").setFontSize(11).setVerticalAlignment("middle");
+      sheet.setRowHeight(r, 28);
+    } else if (k === "sum") {
+      sheet.getRange(r, 1).setFontWeight("bold").setFontColor(TITLE_TX);
+      sheet.getRange(r, 2).setFontWeight("bold").setFontSize(13).setFontColor(TITLE_TX);
+      sheet.setRowHeight(r, 26);
+    } else if (k === "bar") {
+      sheet.getRange(r, 1).setFontWeight("bold").setFontColor(TITLE_TX);
+      sheet.getRange(r, 2).setFontColor(BAR).setFontWeight("bold");
+      sheet.setRowHeight(r, 24);
+    } else if (k === "meta") {
+      rng.setFontColor("#8a8f98").setFontSize(10);
+    } else {                                   // data rows
+      sheet.getRange(r, 1).setFontWeight("bold").setFontColor(TITLE_TX);
+      if (k === "b") rng.setBackground(BAND);  // zebra stripe
+    }
+  }
   sheet.setFrozenRows(1);
 }
+
+function rep(ch, n) { var s = ""; for (var i = 0; i < n; i++) s += ch; return s; }
 
 function fmtDate(iso) {
   try { return Utilities.formatDate(new Date(iso), Session.getScriptTimeZone(), "yyyy-MM-dd HH:mm"); }
