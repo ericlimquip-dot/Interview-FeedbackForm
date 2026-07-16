@@ -106,10 +106,17 @@ function runTest() {
     },
     recommendation: "Hire",
     evalScore: 3,
-    score: { total: 9, max: 12, percent: 75 },
+    score: { total: 10, max: 12, percent: 83 },
     answers: [
-      { section: "Core Competencies", question: "Technical expertise", type: "scorecard", value: "Hire" },
-      { section: "", question: "General comments", type: "paragraph", value: "This is a diagnostic test submission." }
+      { section: "Core Competencies", question: "Cross-functional empathy", type: "scorecard", value: "Hire" },
+      { section: "Core Competencies", question: "Technical expertise",      type: "scorecard", value: "Strong Hire" },
+      { section: "Core Competencies", question: "Adaptability",             type: "scorecard", value: "Hire" },
+      { section: "", question: "Why is the candidate interested in this role?",     type: "paragraph", value: "Wants a bigger backend challenge and to grow into full-stack." },
+      { section: "", question: "Summary of relevant experience",                    type: "paragraph", value: "4+ years front-end (React/Redux); moving toward full-stack with Spring Boot." },
+      { section: "", question: "Salary expectations & notice period",               type: "paragraph", value: "IDR 18-20 million; one month notice." },
+      { section: "", question: "Availability, location / work arrangement",         type: "paragraph", value: "Jakarta; hybrid; available in ~4 weeks." },
+      { section: "", question: "Any concerns or red flags?",                        type: "paragraph", value: "Limited large-scale backend experience - probe in the technical round." },
+      { section: "", question: "General comments",                                  type: "paragraph", value: "Strong communicator and culture fit. Recommend advancing to the technical interview." }
     ],
     recipients: ["e@msbu.co.id"]
   }) } };
