@@ -66,10 +66,9 @@
             border-radius:6px;padding:10px 14px;margin:8px 0;cursor:pointer}
   .eval-opt:hover{border-color:var(--brand)}
   .eval-opt.sel{background:var(--brand);border-color:var(--brand)}
-  .eval-opt.sel .eval-edit,.eval-opt.sel .eval-score{color:#fff}
+  .eval-opt.sel .eval-label,.eval-opt.sel .eval-score{color:#fff}
   .eval-score{font-weight:800;color:var(--ink-strong);min-width:16px}
-  .eval-edit{flex:1;border:0;background:transparent;font:inherit;font-weight:600;color:var(--ink-strong);padding:2px 4px}
-  .eval-edit:focus{outline:none;background:rgba(255,255,255,.25);border-radius:4px}
+  .eval-label{flex:1;font-weight:600;color:var(--ink-strong);padding:2px 4px}
   .eval-dot{width:16px;height:16px;border:2px solid var(--muted2);border-radius:50%}
   .eval-opt.sel .eval-dot{border-color:#fff;background:#fff}
 
@@ -326,10 +325,10 @@ function renderForm(){
       ${f.evaluation.options.map((o,i)=>`
         <div class="eval-opt" data-evalidx="${i}">
           <span class="eval-score">${o.score} -</span>
-          <input class="eval-edit" data-evallabel="${i}" value="${esc(o.label)}" />
+          <span class="eval-label">${esc(o.label)}</span>
           <span class="eval-dot"></span>
         </div>`).join("")}
-      <p class="hint" style="margin-top:8px">Click a row to select. Text is editable.</p>
+      <p class="hint" style="margin-top:8px">Click a row to select your overall recommendation.</p>
     </div>
 
     ${compCard(f)}
@@ -440,7 +439,6 @@ document.addEventListener("input",e=>{
   const t=e.target, f=active?curForm():null, b=active?bag():null;
   if(!f) return;
   if(t.dataset.qlabel!==undefined){ const q=f.questions.find(x=>x.id===t.dataset.qlabel); if(q){ q.label=t.value; save(); } }
-  else if(t.dataset.evallabel!==undefined){ f.evaluation.options[+t.dataset.evallabel].label=t.value; save(); }
   else if(t.dataset.comptitle!==undefined){ f.competencies.title=t.value; save(); }
   else if(t.dataset.compname!==undefined){ const it=f.competencies.items.find(x=>x.id===t.dataset.compname); if(it){ it.name=t.value; save(); } }
   else if(t.dataset.compdesc!==undefined){ const it=f.competencies.items.find(x=>x.id===t.dataset.compdesc); if(it){ it.desc=t.value; save(); } }
@@ -464,7 +462,7 @@ document.addEventListener("click",e=>{
 
   // evaluation select (ignore when editing the label input)
   const opt=t.closest("[data-evalidx]");
-  if(opt && !t.closest(".eval-edit")){ bag().evalIdx=+opt.dataset.evalidx; $$("[data-evalidx]").forEach(x=>x.classList.remove("sel")); opt.classList.add("sel"); return; }
+  if(opt){ bag().evalIdx=+opt.dataset.evalidx; $$("[data-evalidx]").forEach(x=>x.classList.remove("sel")); opt.classList.add("sel"); return; }
 
   // competency thumb
   const th=t.closest("[data-compthumb]");
