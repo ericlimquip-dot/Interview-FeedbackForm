@@ -213,10 +213,10 @@ function writePerSubmission(sheet, p) {
   var HEAD_BG  = "#548235", HEAD_TX  = "#ffffff";   // dark-green section header
   var BAND     = "#eaf1df", BORDER   = "#cfe0bd", BAR = "#70ad47";
 
-  var rows = [], kind = [];
+  var rows = [], kind = [], richA = [];   // richA: competency cells needing name + small grey desc
   function push(a, b, k) { rows.push([a, (b == null ? "" : b)]); kind.push(k); return rows.length; }
   var stripe = 0;
-  function dataRow(a, b) { stripe++; push(a, b, stripe % 2 ? "a" : "b"); }
+  function dataRow(a, b) { stripe++; return push(a, b, stripe % 2 ? "a" : "b"); }
   function head(t) { push(t, "", "head"); stripe = 0; }
 
   push(p.formTitle || "Interview Feedback", "", "title");
@@ -230,7 +230,15 @@ function writePerSubmission(sheet, p) {
   head("CANDIDATE DETAILS");
   Object.keys(p.meta || {}).forEach(function (k) { dataRow(k, p.meta[k]); });
   var comps = (p.answers || []).filter(function (a) { return a.section; });
-  if (comps.length) { head("CORE COMPETENCIES"); comps.forEach(function (a) { dataRow(a.question, a.value + (a.desc ? "\n" + a.desc : "")); }); }
+  if (comps.length) {
+    head("CORE COMPETENCIES");
+    comps.forEach(function (a) {
+      var name = a.question || "";
+      var cellA = a.desc ? (name + "\n" + a.desc) : name;   // name on top, description underneath
+      var row = dataRow(cellA, a.value);
+      if (a.desc) richA.push({ row: row, nameLen: name.length, text: cellA });
+    });
+  }
   var qs = (p.answers || []).filter(function (a) { return !a.section; });
   if (qs.length) { head("FEEDBACK"); qs.forEach(function (a) { dataRow(a.question, a.value); }); }
   if (comps.length) { head("SCORECARD RATING SCALE"); SCALE.forEach(function (s) { dataRow(s.icon + "  " + s.label, s.desc); }); }
@@ -265,6 +273,18 @@ function writePerSubmission(sheet, p) {
       if (k === "b") rng.setBackground(BAND);  // zebra stripe
     }
   }
+
+  // competency cell: bold dark-green name on top, small grey italic description below
+  var nameStyle = SpreadsheetApp.newTextStyle().setBold(true).setForegroundColor(TITLE_TX).setFontSize(11).build();
+  var descStyle = SpreadsheetApp.newTextStyle().setBold(false).setItalic(true).setForegroundColor("#8a929c").setFontSize(9).build();
+  richA.forEach(function (x) {
+    var rt = SpreadsheetApp.newRichTextValue().setText(x.text)
+      .setTextStyle(0, x.nameLen, nameStyle)
+      .setTextStyle(x.nameLen, x.text.length, descStyle)
+      .build();
+    sheet.getRange(x.row, 1).setRichTextValue(rt);
+  });
+
   sheet.setFrozenRows(1);
 }
 
