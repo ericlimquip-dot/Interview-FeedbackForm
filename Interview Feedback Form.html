@@ -3,137 +3,134 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Hiring Manager Feedback Form — MSBU</title>
+<title>Interview Feedback Forms — MSBU</title>
 <style>
   :root{
     --bg:#ededed; --card:#ffffff; --ink:#3b3b3b; --ink-strong:#2b2b2b;
     --muted:#9aa0a6; --muted2:#b7bcc2; --line:#e6e6e6; --line2:#eaeaea;
-    --brand:#5153ff; --brand-dark:#4244e0; --accent-line:#4b6bfb;
-    --red:#f0554d; --ok:#2e9e6b; --field-bg:#f6f7f8;
-    --radius:6px; --shadow:0 1px 2px rgba(0,0,0,.06);
+    --brand:#5153ff; --brand-dark:#4244e0; --red:#f0554d; --ok:#2e9e6b;
+    --field-bg:#f6f7f8; --radius:6px; --shadow:0 1px 2px rgba(0,0,0,.06);
+    --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
   }
   *{box-sizing:border-box}
-  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-       background:var(--bg);color:var(--ink);line-height:1.5;-webkit-font-smoothing:antialiased;font-size:15px}
-  .wrap{max-width:940px;margin:0 auto;padding:20px 18px 120px}
+  body{margin:0;font-family:var(--font);background:var(--bg);color:var(--ink);line-height:1.5;
+       -webkit-font-smoothing:antialiased;font-size:15px}
+  .wrap{max-width:940px;margin:0 auto;padding:20px 18px 130px}
   header.app{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px;flex-wrap:wrap}
   .logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:16px;color:var(--ink-strong)}
   .logo .badge{background:var(--brand);color:#fff;width:32px;height:32px;border-radius:8px;display:grid;place-items:center;font-size:13px}
-  .tabs{display:flex;background:#fff;border:1px solid var(--line);border-radius:8px;overflow:hidden}
-  .tabs button{border:0;background:#fff;padding:8px 16px;font:inherit;font-weight:600;color:var(--muted);cursor:pointer;font-size:14px}
-  .tabs button.active{background:var(--brand);color:#fff}
-  .icon-btn{border:1px solid var(--line);background:#fff;border-radius:8px;padding:8px 14px;font:inherit;font-weight:600;
-            color:var(--ink);cursor:pointer;font-size:14px}
+  .role-chip{background:#eef0ff;color:var(--brand-dark);font-weight:700;border-radius:20px;padding:6px 14px;font-size:14px}
+  .icon-btn{border:1px solid var(--line);background:#fff;border-radius:8px;padding:8px 14px;font:inherit;font-weight:600;color:var(--ink);cursor:pointer;font-size:14px}
   .icon-btn:hover{background:#f7f7f7}
 
   /* cards */
   .card{position:relative;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
         box-shadow:var(--shadow);padding:24px 26px;margin-bottom:16px}
-  .card.eval{border-left:none}
-  .heading-line{border-bottom:1px solid var(--line2);padding-bottom:12px;margin-bottom:0}
+  .card-title{font-size:20px;font-weight:800;color:var(--ink-strong);margin:0 0 12px;padding-bottom:12px;border-bottom:1px solid var(--line2)}
+  .instr{font-size:16px;color:var(--ink);margin:0;display:flex;align-items:flex-start;gap:8px}
+  .instr .lk{color:var(--muted2);font-size:13px;margin-top:2px}
+  .hint{font-size:12.5px;color:var(--muted)}
 
-  /* editable doc title / instructions */
-  .doc-title{width:100%;border:0;font-size:26px;font-weight:800;color:var(--ink-strong);padding:2px 0 12px;
-             border-bottom:1px solid var(--line2);background:transparent}
-  .doc-title:focus{outline:none;border-bottom-color:var(--brand)}
-  .hint{font-size:12.5px;color:var(--muted);margin:14px 0 2px}
-  .doc-instructions{width:100%;border:0;font-size:16px;color:var(--ink);resize:vertical;min-height:26px;background:transparent;font-family:inherit}
-  .doc-instructions:focus{outline:none}
+  /* role chooser */
+  .chooser{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:8px}
+  .role-card{background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);
+             padding:30px 26px;cursor:pointer;transition:.15s}
+  .role-card:hover{border-color:var(--brand);box-shadow:0 6px 24px rgba(81,83,255,.14);transform:translateY(-2px)}
+  .role-card .emoji{font-size:34px}
+  .role-card h3{margin:12px 0 6px;font-size:20px;color:var(--ink-strong)}
+  .role-card p{margin:0;color:var(--muted);font-size:14px}
+  .chooser-head{margin:6px 0 2px;font-size:22px;font-weight:800;color:var(--ink-strong)}
+  .chooser-sub{color:var(--muted);margin:0 0 18px}
+  @media(max-width:640px){.chooser{grid-template-columns:1fr}}
 
-  .q-title-static{font-size:17px;font-weight:800;color:var(--ink-strong);margin:0 0 12px;padding-bottom:12px;border-bottom:1px solid var(--line2)}
-  .instr-static{font-size:16px;color:var(--ink);margin:0}
-
-  /* right-side controls on each card */
+  /* right-side controls */
   .card-controls{position:absolute;top:18px;right:18px;display:flex;flex-direction:column;align-items:flex-end;gap:8px}
-  .ctrl-row{display:flex;gap:8px;align-items:center}
-  .kebab,.arrow,.grip{border:1px solid transparent;background:transparent;color:var(--muted);cursor:pointer;
-        width:30px;height:26px;border-radius:6px;display:grid;place-items:center;font-size:16px;line-height:1}
-  .kebab:hover,.arrow:hover,.grip:hover{background:#f2f2f2;color:var(--ink)}
-  .arrow{border:1px solid var(--line);height:30px;width:34px;font-size:14px}
-  .grip{cursor:grab;font-size:15px;letter-spacing:1px}
+  .kebab{border:1px solid transparent;background:transparent;color:var(--muted);cursor:pointer;width:30px;height:26px;
+         border-radius:6px;display:grid;place-items:center;font-size:16px}
+  .kebab:hover{background:#f2f2f2;color:var(--ink)}
+  .grip{cursor:grab;color:var(--muted);font-size:15px;letter-spacing:1px;padding:2px 4px;border-radius:6px}
+  .grip:hover{background:#f2f2f2;color:var(--ink)}
   .req-badge{background:var(--red);color:#fff;width:30px;height:30px;border-radius:6px;display:grid;place-items:center;font-weight:800}
-  .lock{color:var(--muted2);font-size:16px}
 
-  /* eval locked field */
-  .eval-title{font-size:17px;font-weight:800;color:var(--ink-strong);padding-bottom:12px;border-bottom:1px solid var(--line2);margin:0 0 16px}
-  .eval-opt{background:var(--field-bg);border:1px solid var(--line);border-radius:6px;padding:12px 16px;margin:8px 0;color:#6b7075;font-weight:500}
-  .eval-note{font-size:12.5px;color:var(--muted);margin-top:10px}
-  .eval-opt.click{cursor:pointer;color:var(--ink)}
-  .eval-opt.click:hover{border-color:var(--brand)}
-  .eval-opt.sel{background:var(--brand);border-color:var(--brand);color:#fff}
+  /* candidate details */
+  .meta-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+  .field-label{font-size:14px;font-weight:700;color:var(--ink-strong);display:block;margin-bottom:8px}
+  .field-label .req{color:var(--red);margin-left:3px}
+  input[type=text],input[type=date],textarea,select{width:100%;padding:10px 12px;border:1px solid var(--line);
+        border-radius:6px;font:inherit;background:#fff;color:var(--ink)}
+  textarea{min-height:92px;resize:vertical}
+  input:focus,textarea:focus,select:focus{outline:2px solid #eef0ff;border-color:var(--brand)}
 
-  /* question builder row */
-  .q-label-input{width:calc(100% - 90px);border:0;border-bottom:1px solid var(--line2);font-size:17px;font-weight:800;
-                 color:var(--ink-strong);padding:2px 0 12px;background:transparent}
+  /* evaluation: selectable + editable */
+  .eval-opt{display:flex;align-items:center;gap:10px;background:var(--field-bg);border:1px solid var(--line);
+            border-radius:6px;padding:10px 14px;margin:8px 0;cursor:pointer}
+  .eval-opt:hover{border-color:var(--brand)}
+  .eval-opt.sel{background:var(--brand);border-color:var(--brand)}
+  .eval-opt.sel .eval-edit,.eval-opt.sel .eval-score{color:#fff}
+  .eval-score{font-weight:800;color:var(--ink-strong);min-width:16px}
+  .eval-edit{flex:1;border:0;background:transparent;font:inherit;font-weight:600;color:var(--ink-strong);padding:2px 4px}
+  .eval-edit:focus{outline:none;background:rgba(255,255,255,.25);border-radius:4px}
+  .eval-dot{width:16px;height:16px;border:2px solid var(--muted2);border-radius:50%}
+  .eval-opt.sel .eval-dot{border-color:#fff;background:#fff}
+
+  /* scorecard / competencies */
+  .comp-type{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:2px 0 14px}
+  .comp-row{display:flex;align-items:center;gap:16px;border:1px solid var(--line);border-radius:8px;padding:14px 16px;margin:10px 0}
+  .comp-info{flex:1;min-width:0}
+  .comp-name{border:0;font-size:16px;font-weight:700;color:var(--ink-strong);padding:0 0 2px;background:transparent}
+  .comp-name:focus{outline:none}
+  .comp-desc{border:0;font-size:13px;color:var(--muted);padding:0;background:transparent}
+  .comp-desc:focus{outline:none;color:var(--ink)}
+  .thumbs{display:flex;gap:6px}
+  .thumb{border:1px solid var(--line);background:var(--field-bg);border-radius:8px;width:52px;height:44px;font-size:18px;
+         cursor:pointer;display:grid;place-items:center;filter:grayscale(1);opacity:.55;transition:.12s;line-height:1}
+  .thumb:hover{opacity:1;border-color:var(--brand)}
+  .thumb.sel{opacity:1;filter:none;background:#eef0ff;border-color:var(--brand)}
+  .comp-del{border:0;background:transparent;color:var(--muted2);font-size:20px;cursor:pointer;line-height:1;padding:4px 6px}
+  .comp-del:hover{color:var(--red)}
+  .add-row{width:100%;text-align:left;border:1px dashed var(--line);background:var(--field-bg);border-radius:8px;
+           padding:12px 16px;color:var(--muted);font:inherit;cursor:pointer;margin-top:6px}
+  .add-row:hover{border-color:var(--brand);color:var(--ink)}
+
+  /* questions */
+  .q-head{display:flex;align-items:center;gap:6px;padding-right:80px}
+  .q-req{color:var(--red);font-weight:800}
+  .q-label-input{flex:1;border:0;border-bottom:1px solid var(--line2);font-size:17px;font-weight:800;color:var(--ink-strong);
+                 padding:2px 0 12px;background:transparent}
   .q-label-input:focus{outline:none;border-bottom-color:var(--brand)}
-  .type-select{margin-top:14px;display:inline-flex;align-items:center;gap:6px;position:relative}
-  .type-select select{appearance:none;border:0;background:transparent;font:inherit;font-size:12px;font-weight:700;
-        letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:4px 22px 4px 0;cursor:pointer}
-  .type-select::after{content:"⌄";position:absolute;right:4px;top:2px;color:var(--muted);pointer-events:none}
-  .opts-edit{margin-top:14px}
-  .opts-edit label{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);display:block;margin-bottom:6px}
-  .opts-edit textarea{width:100%;border:1px solid var(--line);border-radius:6px;padding:8px 10px;font:inherit;min-height:70px;resize:vertical}
-  .score-edit{margin-top:14px;display:flex;gap:16px;flex-wrap:wrap}
-  .score-edit label{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);display:block;margin-bottom:4px}
-  .score-edit input{width:90px;border:1px solid var(--line);border-radius:6px;padding:7px 9px;font:inherit}
+  .q-ans{margin-top:14px}
 
-  /* kebab menu popover */
-  .menu{position:absolute;top:52px;right:18px;background:#fff;border:1px solid var(--line);border-radius:8px;
-        box-shadow:0 6px 20px rgba(0,0,0,.14);min-width:180px;z-index:20;overflow:hidden}
-  .menu button{display:flex;width:100%;gap:10px;align-items:center;border:0;background:#fff;padding:10px 14px;font:inherit;
-        font-size:14px;text-align:left;cursor:pointer;color:var(--ink)}
+  /* kebab menu */
+  .menu{position:absolute;top:50px;right:18px;background:#fff;border:1px solid var(--line);border-radius:8px;
+        box-shadow:0 6px 20px rgba(0,0,0,.14);min-width:170px;z-index:20;overflow:hidden}
+  .menu button{display:flex;width:100%;gap:10px;border:0;background:#fff;padding:10px 14px;font:inherit;font-size:14px;text-align:left;cursor:pointer;color:var(--ink)}
   .menu button:hover{background:#f5f6f8}
   .menu button.danger{color:var(--red)}
   .menu .sep{height:1px;background:var(--line2)}
-  .menu .chk{margin-left:auto;color:var(--brand);font-weight:800}
 
-  /* add another question */
   .add-q{width:100%;border:1px solid var(--line);background:#fff;border-radius:var(--radius);padding:16px;font:inherit;
          font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink);cursor:pointer;font-size:13px;
          display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:var(--shadow)}
   .add-q:hover{background:#fafafa;border-color:var(--muted2)}
 
-  /* fill-mode inputs */
-  .field-label{font-size:15px;font-weight:700;color:var(--ink-strong);display:block;margin-bottom:8px}
-  .field-label .req{color:var(--red);margin-left:3px}
-  .fill input[type=text],.fill input[type=date],.fill textarea,.fill select{
-     width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:6px;font:inherit;background:#fff;color:var(--ink)}
-  .fill textarea{min-height:90px;resize:vertical}
-  .fill input:focus,.fill textarea:focus,.fill select:focus{outline:2px solid #eef0ff;border-color:var(--brand)}
-  .meta-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
-  .rating{display:flex;gap:8px;flex-wrap:wrap}
-  .rating input{position:absolute;opacity:0;width:0;height:0}
-  .rating label{border:1px solid var(--line);border-radius:6px;padding:9px 15px;min-width:46px;text-align:center;cursor:pointer;font-weight:700}
-  .rating input:checked + label{background:var(--brand);border-color:var(--brand);color:#fff}
-  .pills{display:flex;gap:8px;flex-wrap:wrap}
-  .pills input{position:absolute;opacity:0;width:0;height:0}
-  .pills label{border:1px solid var(--line);border-radius:20px;padding:8px 18px;cursor:pointer;font-weight:600}
-  .pills input:checked + label{background:var(--brand);border-color:var(--brand);color:#fff}
-  .check-list label{display:flex;align-items:center;gap:9px;padding:5px 0;font-weight:500;cursor:pointer}
-
-  .footer-bar{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);
-              padding:14px 18px;display:flex;gap:12px;justify-content:flex-end;align-items:center;z-index:15}
+  /* footer */
+  .footer-bar{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);padding:14px 18px;z-index:15}
   .footer-inner{max-width:940px;margin:0 auto;width:100%;display:flex;gap:12px;justify-content:flex-end;align-items:center}
   .score-chip{background:#eef0ff;color:var(--brand-dark);font-weight:700;border-radius:8px;padding:9px 15px;margin-right:auto}
   button.primary{background:var(--brand);border:1px solid var(--brand);color:#fff;padding:10px 20px;border-radius:8px;font:inherit;font-weight:700;cursor:pointer}
   button.primary:hover{background:var(--brand-dark)}
   button.ghost{background:#fff;border:1px solid var(--line);color:var(--ink);padding:10px 16px;border-radius:8px;font:inherit;font-weight:600;cursor:pointer}
 
-  .dragging{opacity:.45}
-  .drop-target{border-top:2px solid var(--brand)!important}
-  .hidden{display:none!important}
+  .dragging{opacity:.45}.drop-target{border-top:2px solid var(--brand)!important}.hidden{display:none!important}
 
-  /* toast + modal */
-  .toast{position:fixed;left:50%;bottom:80px;transform:translateX(-50%);background:#222;color:#fff;padding:12px 18px;
-         border-radius:10px;box-shadow:var(--shadow);opacity:0;pointer-events:none;transition:.25s;z-index:60;max-width:90vw;text-align:center}
+  .toast{position:fixed;left:50%;bottom:84px;transform:translateX(-50%);background:#222;color:#fff;padding:12px 18px;border-radius:10px;
+         box-shadow:var(--shadow);opacity:0;pointer-events:none;transition:.25s;z-index:60;max-width:90vw;text-align:center}
   .toast.show{opacity:1}.toast.err{background:var(--red)}.toast.ok{background:var(--ok)}
   .modal{position:fixed;inset:0;background:rgba(20,20,25,.5);display:none;place-items:center;z-index:50;padding:16px}
   .modal.show{display:grid}
   .modal .card{max-width:560px;width:100%;margin:0;max-height:88vh;overflow:auto}
-  .modal .card .field-label{margin-top:14px}
-  .modal input[type=text],.modal textarea{width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:6px;font:inherit}
-  .row-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-  @media(max-width:560px){.row-2{grid-template-columns:1fr}.card{padding:20px 18px}}
+  .modal .field-label{margin-top:14px}
+  code{background:#f1f5f9;padding:2px 6px;border-radius:5px;font-size:13px}
 </style>
 </head>
 <body>
@@ -141,14 +138,11 @@
   <header class="app">
     <div class="logo"><span class="badge">MB</span> <span id="brandName">MSBU</span></div>
     <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-      <div class="tabs">
-        <button id="tabEdit" class="active">Edit form</button>
-        <button id="tabFill">Preview &amp; fill</button>
-      </div>
+      <span id="roleChip" class="role-chip hidden"></span>
+      <button id="btnSwitch" class="icon-btn hidden">Switch role</button>
       <button id="btnSettings" class="icon-btn">Settings</button>
     </div>
   </header>
-
   <div id="stage"></div>
 </div>
 
@@ -156,25 +150,14 @@
 <div class="modal" id="settingsModal">
   <div class="card">
     <h2 style="margin:0 0 4px">Settings</h2>
-    <p class="hint" style="margin:0 0 8px">Recipients, backend, candidate fields, and the evaluation scale.</p>
-
+    <p class="hint" style="margin:0 0 8px">Shared across both forms.</p>
     <label class="field-label">Email recipients (comma separated)</label>
     <input type="text" id="setRecipients" />
-
     <label class="field-label">Backend URL (Google Apps Script Web App)</label>
     <input type="text" id="setEndpoint" placeholder="https://script.google.com/macros/s/……/exec" />
     <p class="hint">Leave blank to fall back to Excel download + email draft.</p>
-
-    <label class="field-label">Candidate detail fields (one per line — shown in Preview &amp; fill)</label>
-    <textarea id="setMeta" placeholder="Candidate name*&#10;Position applied for*&#10;Interview stage&#10;Interviewer name*&#10;Interview date:date*"></textarea>
-    <p class="hint">Add <code>*</code> for required, <code>:date</code> for a date picker. e.g. <code>Interview date:date*</code></p>
-
-    <label class="field-label">Evaluation scale (one per line, <code>score | label</code>)</label>
-    <textarea id="setEval" placeholder="4 | Strong Hire&#10;3 | Hire&#10;2 | No Hire&#10;1 | Strong No Hire"></textarea>
-
     <label class="field-label">Company / brand label</label>
     <input type="text" id="setBrand" />
-
     <div style="display:flex;gap:8px;justify-content:space-between;margin-top:18px;flex-wrap:wrap">
       <div style="display:flex;gap:8px">
         <button class="ghost" id="btnExportCfg">Export config</button>
@@ -195,333 +178,354 @@
 <script>
 "use strict";
 /* ======================================================================
-   MSBU Hiring Manager Feedback Form  —  Lever-style inline builder
-   • Edit form  : inline add / edit / delete / reorder questions + type dropdown
-   • Preview & fill : answerable form -> POST to Apps Script (Sheet + email)
+   MSBU Interview Feedback — two fully-independent forms
+   Recruiter (initial call)  |  Hiring Manager (advance call)
+   Pick a role -> fill/edit only that form -> submit only that form's data.
    ====================================================================== */
-
-const STORE_KEY = "msbu_feedback_config_v2";
+const STORE_KEY = "msbu_feedback_config_v3";
+const ROLE_KEY  = "msbu_feedback_active_role";
 const uid = () => "id" + Math.random().toString(36).slice(2, 9);
 const $  = (s,r=document)=>r.querySelector(s);
 const $$ = (s,r=document)=>[...r.querySelectorAll(s)];
 
-const TYPES = [
-  {v:"paragraph", label:"Text (Paragraph)"},
-  {v:"single",    label:"Text (Single line)"},
-  {v:"score",     label:"Score"},
-  {v:"yesno",     label:"Yes / No"},
-  {v:"dropdown",  label:"Dropdown"},
-  {v:"multiple",  label:"Multiple choice"},
-  {v:"checkbox",  label:"Checkboxes"},
+const THUMBS = [
+  {v:1, icon:"👎", title:"Strong No Hire"},
+  {v:2, icon:"👎", title:"No Hire"},
+  {v:3, icon:"👍", title:"Hire"},
+  {v:4, icon:"👍", title:"Strong Hire"},
 ];
-const typeLabel = v => (TYPES.find(t=>t.v===v)||{}).label || v;
-const NEEDS_OPTS = t => ["dropdown","multiple","checkbox"].includes(t);
-const IS_SCORE   = t => t==="score";
 
-/* ---------------- default config (matches the Lever example) ---------------- */
+/* ---------------- default config ---------------- */
+function metaDefault(){
+  return [
+    {label:"Candidate name",       required:true, type:"text"},
+    {label:"Position applied for", required:true, type:"text"},
+    {label:"Interview stage",      required:true, type:"select", options:["Initial Call","Advance Call"]},
+    {label:"Interviewer name",     required:true, type:"text"},
+    {label:"Interview date",       required:true, type:"date"},
+  ];
+}
+function evalDefault(){
+  return {label:"Your evaluation", options:[
+    {score:4,label:"Strong Hire"},{score:3,label:"Hire"},{score:2,label:"No Hire"},{score:1,label:"Strong No Hire"},
+  ]};
+}
+function compsDefault(){
+  return {title:"Core Competencies", items:[
+    {id:uid(), name:"Cross-functional empathy", desc:""},
+    {id:uid(), name:"Technical expertise",      desc:""},
+    {id:uid(), name:"Adaptability",             desc:""},
+  ]};
+}
 function defaultConfig(){
   return {
     brand:"MSBU",
-    title:"Hiring Manager Feedback Form",
-    instructions:"This is an initial call to discover more about the candidate and assess for team fit.",
     recipients:"erika@msbukonsultan.id, hr@msbu.co.id, e@msbu.co.id",
     endpoint:"",
-    meta:[
-      {label:"Candidate name", required:true, type:"text"},
-      {label:"Position applied for", required:true, type:"text"},
-      {label:"Interview stage", required:false, type:"text"},
-      {label:"Interviewer name", required:true, type:"text"},
-      {label:"Interview date", required:true, type:"date"},
-    ],
-    evaluation:{
-      label:"Your evaluation",
-      options:[
-        {score:4,label:"Strong Hire"},
-        {score:3,label:"Hire"},
-        {score:2,label:"No Hire"},
-        {score:1,label:"Strong No Hire"},
-      ]
-    },
-    questions:[
-      {id:uid(), label:"Will this candidate raise the bar for the team?", type:"paragraph", required:false},
-      {id:uid(), label:"Describe the most challenging project you've worked on.", type:"paragraph", required:false},
-      {id:uid(), label:"Technical question #1", type:"paragraph", required:false},
-      {id:uid(), label:"Technical question #2", type:"paragraph", required:false},
-      {id:uid(), label:"What excites you about our team and why?", type:"single", required:false},
-      {id:uid(), label:"Do you have any lingering questions for this candidate?", type:"paragraph", required:false},
-      {id:uid(), label:"General comments", type:"paragraph", required:false},
-    ]
+    forms:{
+      recruiter:{
+        role:"Recruiter",
+        title:"Recruiter Feedback Form",
+        instructions:"This is an initial call to discover more about the candidate and assess for team fit",
+        sortable:true,
+        meta:metaDefault(), evaluation:evalDefault(), competencies:compsDefault(),
+        questions:[
+          {id:uid(), label:"Why is the candidate interested in this role?"},
+          {id:uid(), label:"Summary of relevant experience"},
+          {id:uid(), label:"Salary expectations & notice period"},
+          {id:uid(), label:"Availability, location / work arrangement"},
+          {id:uid(), label:"Any concerns or red flags?"},
+          {id:uid(), label:"General comments"},
+        ]
+      },
+      hiringManager:{
+        role:"Hiring Manager",
+        title:"Hiring Manager Feedback Form",
+        instructions:"This is an advance call to discover more about the candidate technical, background and assess for team fit.",
+        sortable:false,
+        meta:metaDefault(), evaluation:evalDefault(), competencies:compsDefault(),
+        questions:[
+          {id:uid(), label:"Will this candidate raise the bar for the team?"},
+          {id:uid(), label:"Describe the most challenging project you've worked on."},
+          {id:uid(), label:"Technical question #1"},
+          {id:uid(), label:"Technical question #2"},
+          {id:uid(), label:"What excites you about our team and why?"},
+          {id:uid(), label:"Do you have any lingering questions for this candidate?"},
+          {id:uid(), label:"General comments"},
+        ]
+      }
+    }
   };
 }
 
+/* ---------------- state ---------------- */
 let cfg = load();
-let mode = "edit";          // "edit" | "fill"
-let openMenuFor = null;     // question id whose kebab menu is open
+let active = localStorage.getItem(ROLE_KEY) || null;   // "recruiter" | "hiringManager" | null
+let ans = {};                                          // per-role answer bags (transient)
+let openMenuFor = null;
 
 function load(){ try{ const r=localStorage.getItem(STORE_KEY); if(r) return JSON.parse(r);}catch(e){} return defaultConfig(); }
 function save(){ localStorage.setItem(STORE_KEY, JSON.stringify(cfg)); }
-function toast(m,k=""){ const t=$("#toast"); t.textContent=m; t.className="toast show "+k; clearTimeout(toast._t); toast._t=setTimeout(()=>t.className="toast",2800); }
+function toast(m,k=""){ const t=$("#toast"); t.textContent=m; t.className="toast show "+k; clearTimeout(toast._t); toast._t=setTimeout(()=>t.className="toast",3000); }
 function esc(s){ return String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
+function curForm(){ return cfg.forms[active]; }
+function bag(){ ans[active] = ans[active] || {meta:{}, evalIdx:null, questions:{}, comps:{}}; return ans[active]; }
 
-/* ====================================================================
+/* ======================================================================
    RENDER
-   ==================================================================== */
+   ====================================================================== */
 function render(){
   $("#brandName").textContent = cfg.brand;
-  $("#tabEdit").classList.toggle("active", mode==="edit");
-  $("#tabFill").classList.toggle("active", mode==="fill");
-  mode==="edit" ? renderBuilder() : renderFill();
+  const showForm = !!active;
+  $("#roleChip").classList.toggle("hidden", !showForm);
+  $("#btnSwitch").classList.toggle("hidden", !showForm);
+  if(showForm){ $("#roleChip").textContent = "You are: " + curForm().role; }
+  showForm ? renderForm() : renderChooser();
 }
 
-/* ---------------- BUILDER (edit form) ---------------- */
-function renderBuilder(){
-  const stage=$("#stage"); stage.className="";
+function renderChooser(){
+  removeFooter();
+  const r=cfg.forms.recruiter, h=cfg.forms.hiringManager;
+  $("#stage").innerHTML = `
+    <p class="chooser-head">Which feedback form are you filling in?</p>
+    <p class="chooser-sub">Pick your role for this interview. You'll only see and submit that form.</p>
+    <div class="chooser">
+      <div class="role-card" data-pick="recruiter">
+        <div class="emoji">📞</div>
+        <h3>${esc(r.role)}</h3>
+        <p>${esc(r.instructions)}</p>
+      </div>
+      <div class="role-card" data-pick="hiringManager">
+        <div class="emoji">🧑‍💼</div>
+        <h3>${esc(h.role)}</h3>
+        <p>${esc(h.instructions)}</p>
+      </div>
+    </div>`;
+}
+
+function renderForm(){
+  const f=curForm();
+  const stage=$("#stage");
   stage.innerHTML = `
     <div class="card">
-      <input class="doc-title" id="docTitle" value="${esc(cfg.title)}" />
-      <div class="hint">Instructions for interviewers</div>
-      <textarea class="doc-instructions" id="docInstr" rows="1">${esc(cfg.instructions)}</textarea>
+      <h1 class="card-title" style="font-size:24px;border:0;padding-bottom:6px">${esc(f.title)}</h1>
+      <p class="instr"><span>${esc(f.instructions)}</span><span class="lk" title="Locked — cannot be edited">🔒</span></p>
     </div>
 
-    <div class="card eval">
-      <div class="card-controls">
-        <div class="ctrl-row"><span class="req-badge">*</span><span class="lock" title="Locked field">🔒</span></div>
-      </div>
-      <div class="eval-title">${esc(cfg.evaluation.label)}</div>
-      ${cfg.evaluation.options.map(o=>`<div class="eval-opt">${o.score} - ${esc(o.label)}</div>`).join("")}
-      <div class="eval-note">This is the overall score field and cannot be edited.</div>
+    <div class="card">
+      <div class="card-title">Candidate details</div>
+      <div class="meta-grid">${f.meta.map(metaField).join("")}</div>
     </div>
+
+    <div class="card">
+      <div class="card-controls"><span class="req-badge" title="Required">*</span></div>
+      <div class="card-title">${esc(f.evaluation.label)}</div>
+      ${f.evaluation.options.map((o,i)=>`
+        <div class="eval-opt" data-evalidx="${i}">
+          <span class="eval-score">${o.score} -</span>
+          <input class="eval-edit" data-evallabel="${i}" value="${esc(o.label)}" />
+          <span class="eval-dot"></span>
+        </div>`).join("")}
+      <p class="hint" style="margin-top:8px">Click a row to select. Text is editable.</p>
+    </div>
+
+    ${compCard(f)}
 
     <div id="qcards"></div>
-
     <button class="add-q" id="addQ">＋ Add another question</button>
   `;
-
   const host=$("#qcards");
-  cfg.questions.forEach((q,i)=>host.appendChild(builderCard(q,i)));
-
-  // wire top card
-  $("#docTitle").addEventListener("input",e=>{ cfg.title=e.target.value; save(); });
-  const instr=$("#docInstr");
-  autoGrow(instr); instr.addEventListener("input",e=>{ cfg.instructions=e.target.value; autoGrow(instr); save(); });
+  f.questions.forEach((q,i)=>host.appendChild(questionCard(q,i,f.sortable)));
   $("#addQ").addEventListener("click",addQuestion);
+  ensureFooter();
+  restore();
+  updateScore();
 }
 
-function builderCard(q,idx){
+function metaField(m){
+  const req=m.required?'<span class="req">*</span>':'';
+  let control;
+  if(m.type==="select"){
+    control=`<select data-meta="${esc(m.label)}"><option value="">— select —</option>${(m.options||[]).map(o=>`<option>${esc(o)}</option>`).join("")}</select>`;
+  } else {
+    control=`<input type="${m.type==='date'?'date':'text'}" data-meta="${esc(m.label)}" />`;
+  }
+  return `<div><label class="field-label">${esc(m.label)}${req}</label>${control}</div>`;
+}
+
+function compCard(f){
+  const c=f.competencies;
+  return `<div class="card">
+    <div class="card-controls"><span class="req-badge" title="Required">*</span></div>
+    <input class="card-title" style="width:calc(100% - 60px);border:0;border-bottom:1px solid var(--line2)" data-comptitle value="${esc(c.title)}" />
+    <div class="comp-type">Scorecard</div>
+    ${c.items.map(it=>`
+      <div class="comp-row" data-compid="${it.id}">
+        <div class="comp-info">
+          <input class="comp-name" data-compname="${it.id}" value="${esc(it.name)}" placeholder="Competency" /><br>
+          <input class="comp-desc" data-compdesc="${it.id}" value="${esc(it.desc||'')}" placeholder="Add description" />
+        </div>
+        <div class="thumbs">
+          ${THUMBS.map(t=>`<button class="thumb" data-compthumb="${it.id}" data-val="${t.v}" title="${t.title}">${t.icon}</button>`).join("")}
+        </div>
+        <button class="comp-del" data-compdel="${it.id}" title="Remove competency">×</button>
+      </div>`).join("")}
+    <button class="add-row" data-compadd>＋ Add another</button>
+  </div>`;
+}
+
+function questionCard(q,idx,sortable){
   const card=document.createElement("div");
   card.className="card q-card"; card.dataset.idx=idx; card.dataset.id=q.id;
-  card.innerHTML = `
+  card.innerHTML=`
     <div class="card-controls">
       <button class="kebab" data-kebab="${q.id}" title="More">⋯</button>
-      <div class="ctrl-row">
-        <span class="grip" title="Drag to reorder" draggable="true">⠿</span>
-      </div>
-      <div class="ctrl-row">
-        <button class="arrow" data-up="${idx}" title="Move up">↑</button>
-      </div>
-      <div class="ctrl-row">
-        <button class="arrow" data-down="${idx}" title="Move down">↓</button>
-      </div>
+      ${sortable?`<span class="grip" draggable="true" title="Drag to reorder">⠿</span>`:``}
     </div>
-
-    <input class="q-label-input" data-label="${q.id}" value="${esc(q.label)}" placeholder="Type your question ..." />
-
-    <div class="type-select">
-      <select data-type="${q.id}">
-        ${TYPES.map(t=>`<option value="${t.v}" ${t.v===q.type?"selected":""}>${t.label}</option>`).join("")}
-      </select>
+    <div class="q-head">
+      <span class="q-req" title="Required">*</span>
+      <input class="q-label-input" data-qlabel="${q.id}" value="${esc(q.label)}" placeholder="Type your question ..." />
     </div>
-
-    ${IS_SCORE(q.type)?`
-      <div class="score-edit">
-        <div><label>Max score</label><input type="number" min="2" max="10" value="${q.scale||5}" data-scale="${q.id}"></div>
-        <div><label>Weight</label><input type="number" min="0" max="10" step="0.5" value="${q.weight||1}" data-weight="${q.id}"></div>
-      </div>`:""}
-
-    ${NEEDS_OPTS(q.type)?`
-      <div class="opts-edit">
-        <label>Options (one per line)</label>
-        <textarea data-opts="${q.id}" placeholder="Option A&#10;Option B">${esc((q.options||[]).join("\n"))}</textarea>
-      </div>`:""}
-
-    ${q.required?`<div class="hint" style="margin-top:12px;color:var(--red)">Required</div>`:""}
-
-    ${openMenuFor===q.id?kebabMenu(q):""}
+    <textarea class="q-ans" data-qans="${q.id}" placeholder="Type your answer…"></textarea>
+    ${openMenuFor===q.id?menuHtml(q):""}
   `;
   return card;
 }
-
-function kebabMenu(q){
+function menuHtml(q){
   return `<div class="menu" data-menu="${q.id}">
-    <button data-act="require" data-id="${q.id}">Required ${q.required?'<span class="chk">✓</span>':''}</button>
     <button data-act="duplicate" data-id="${q.id}">Duplicate</button>
     <div class="sep"></div>
     <button class="danger" data-act="delete" data-id="${q.id}">Delete question</button>
   </div>`;
 }
 
-/* ---------------- FILL (preview & answer) ---------------- */
-function renderFill(){
-  const stage=$("#stage"); stage.className="fill";
-  const metaHtml = cfg.meta.map(m=>`
-    <div>
-      <label class="field-label">${esc(m.label)}${m.required?'<span class="req">*</span>':''}</label>
-      <input type="${m.type==='date'?'date':'text'}" data-meta="${esc(m.label)}" />
-    </div>`).join("");
-
-  const evalHtml = cfg.evaluation.options.map((o,i)=>`
-    <div class="eval-opt click" data-evalpick="${o.score}|${esc(o.label)}">${o.score} - ${esc(o.label)}</div>`).join("");
-
-  stage.innerHTML = `
-    <div class="card">
-      <h1 class="q-title-static" style="font-size:24px">${esc(cfg.title)}</h1>
-      <p class="instr-static">${esc(cfg.instructions)}</p>
-    </div>
-
-    <div class="card">
-      <div class="q-title-static">Candidate details</div>
-      <div class="meta-grid">${metaHtml}</div>
-    </div>
-
-    <div class="card">
-      <div class="q-title-static">${esc(cfg.evaluation.label)} <span class="req" style="color:var(--red)">*</span></div>
-      <div id="evalPick">${evalHtml}</div>
-      <input type="hidden" id="evalValue" />
-    </div>
-
-    <div id="fillQuestions"></div>
-  `;
-
-  const fq=$("#fillQuestions");
-  cfg.questions.forEach(q=>fq.appendChild(fillCard(q)));
-
-  // eval picker
-  $$("#evalPick .eval-opt").forEach(el=>el.addEventListener("click",()=>{
-    $$("#evalPick .eval-opt").forEach(x=>x.classList.remove("sel"));
-    el.classList.add("sel"); $("#evalValue").value=el.dataset.evalpick; updateScore();
-  }));
-
-  ensureFooter();
-  updateScore();
-}
-
-function fillCard(q){
-  const c=document.createElement("div"); c.className="card";
-  const name="q_"+q.id; let control="";
-  if(q.type==="paragraph") control=`<textarea data-q="${q.id}" placeholder="Type your answer…"></textarea>`;
-  else if(q.type==="single") control=`<input type="text" data-q="${q.id}" />`;
-  else if(q.type==="score"){ const s=q.scale||5; let p=""; for(let n=1;n<=s;n++) p+=`<input type="radio" id="${name}_${n}" name="${name}" value="${n}" data-q="${q.id}" data-weight="${q.weight||1}" class="scoreInput"><label for="${name}_${n}">${n}</label>`; control=`<div class="rating">${p}</div>`; }
-  else if(q.type==="yesno") control=`<div class="pills"><input type="radio" id="${name}_y" name="${name}" value="Yes" data-q="${q.id}"><label for="${name}_y">Yes</label><input type="radio" id="${name}_n" name="${name}" value="No" data-q="${q.id}"><label for="${name}_n">No</label></div>`;
-  else if(q.type==="dropdown") control=`<select data-q="${q.id}"><option value="">— select —</option>${(q.options||[]).map(o=>`<option>${esc(o)}</option>`).join("")}</select>`;
-  else if(q.type==="multiple") control=`<div class="pills">${(q.options||[]).map((o,i)=>`<input type="radio" id="${name}_${i}" name="${name}" value="${esc(o)}" data-q="${q.id}"><label for="${name}_${i}">${esc(o)}</label>`).join("")}</div>`;
-  else if(q.type==="checkbox") control=`<div class="check-list">${(q.options||[]).map((o,i)=>`<label><input type="checkbox" data-q="${q.id}" value="${esc(o)}">${esc(o)}</label>`).join("")}</div>`;
-
-  c.innerHTML = `<label class="field-label">${esc(q.label)}${q.required?'<span class="req">*</span>':''}${IS_SCORE(q.type)?` <span class="hint" style="display:inline">(1–${q.scale||5})</span>`:""}</label>${control}`;
-  return c;
-}
-
 function ensureFooter(){
   if($("#footerBar")) return;
   const f=document.createElement("div"); f.className="footer-bar"; f.id="footerBar";
   f.innerHTML=`<div class="footer-inner">
-      <span class="score-chip" id="scoreChip">Score: n/a</span>
-      <button class="ghost" id="btnClear">Clear</button>
-      <button class="primary" id="btnSubmit">Submit feedback</button>
-    </div>`;
+    <span class="score-chip" id="scoreChip">Scorecard: 0</span>
+    <button class="ghost" id="btnClear">Clear</button>
+    <button class="primary" id="btnSubmit">Submit feedback</button>
+  </div>`;
   document.body.appendChild(f);
   $("#btnSubmit").addEventListener("click",submitForm);
-  $("#btnClear").addEventListener("click",()=>{ if(confirm("Clear all answers?")) renderFill(); });
+  $("#btnClear").addEventListener("click",()=>{ if(confirm("Clear all answers on this form?")){ ans[active]={meta:{},evalIdx:null,questions:{},comps:{}}; renderForm(); } });
 }
 function removeFooter(){ const f=$("#footerBar"); if(f) f.remove(); }
 
-/* ====================================================================
-   SCORING
-   ==================================================================== */
+/* restore transient answers into freshly-rendered DOM */
+function restore(){
+  const b=bag();
+  $$("[data-meta]").forEach(el=>{ const v=b.meta[el.dataset.meta]; if(v!=null) el.value=v; });
+  $$("[data-evalidx]").forEach(el=>el.classList.toggle("sel", +el.dataset.evalidx===b.evalIdx));
+  $$("[data-qans]").forEach(el=>{ const v=b.questions[el.dataset.qans]; if(v!=null) el.value=v; });
+  Object.entries(b.comps).forEach(([id,v])=>{ const btn=document.querySelector(`[data-compthumb="${id}"][data-val="${v}"]`); if(btn) btn.classList.add("sel"); });
+}
+
 function updateScore(){
-  if(mode!=="fill"){ return; }
-  let total=0,max=0;
-  cfg.questions.forEach(q=>{ if(!IS_SCORE(q.type)) return; const w=+(q.weight||1),s=+(q.scale||5); max+=s*w;
-    const sel=document.querySelector(`.scoreInput[data-q="${q.id}"]:checked`); if(sel) total+=(+sel.value)*w; });
-  const chip=$("#scoreChip"); if(chip) chip.textContent = max>0?`Score: ${total} / ${max}`:"Score: n/a";
-}
-document.addEventListener("change",e=>{ if(e.target.classList&&e.target.classList.contains("scoreInput")) updateScore(); });
-
-/* ====================================================================
-   BUILDER ACTIONS
-   ==================================================================== */
-function addQuestion(){
-  cfg.questions.push({id:uid(), label:"", type:"paragraph", required:false});
-  save(); renderBuilder();
-  const cards=$$("#qcards .q-card"); const last=cards[cards.length-1];
-  if(last){ last.scrollIntoView({behavior:"smooth",block:"center"}); const inp=last.querySelector("[data-label]"); if(inp) inp.focus(); }
+  if(!active) return;
+  const items=curForm().competencies.items, b=bag();
+  let total=0,max=items.length*4;
+  items.forEach(it=>{ if(b.comps[it.id]) total+=b.comps[it.id]; });
+  const chip=$("#scoreChip"); if(chip) chip.textContent = max?`Scorecard: ${total} / ${max}`:"Scorecard: n/a";
 }
 
-// live edits (labels, type, options, scale, weight, doc fields already wired)
+/* ======================================================================
+   EDIT / INPUT handlers
+   ====================================================================== */
 document.addEventListener("input",e=>{
-  const t=e.target;
-  if(t.dataset.label!==undefined){ const q=byId(t.dataset.label); if(q){ q.label=t.value; save(); } }
-  else if(t.dataset.opts!==undefined){ const q=byId(t.dataset.opts); if(q){ q.options=t.value.split("\n").map(s=>s.trim()).filter(Boolean); save(); } }
-  else if(t.dataset.scale!==undefined){ const q=byId(t.dataset.scale); if(q){ q.scale=Math.max(2,+t.value||5); save(); } }
-  else if(t.dataset.weight!==undefined){ const q=byId(t.dataset.weight); if(q){ q.weight=+t.value||1; save(); } }
+  const t=e.target, f=active?curForm():null, b=active?bag():null;
+  if(!f) return;
+  if(t.dataset.qlabel!==undefined){ const q=f.questions.find(x=>x.id===t.dataset.qlabel); if(q){ q.label=t.value; save(); } }
+  else if(t.dataset.evallabel!==undefined){ f.evaluation.options[+t.dataset.evallabel].label=t.value; save(); }
+  else if(t.dataset.comptitle!==undefined){ f.competencies.title=t.value; save(); }
+  else if(t.dataset.compname!==undefined){ const it=f.competencies.items.find(x=>x.id===t.dataset.compname); if(it){ it.name=t.value; save(); } }
+  else if(t.dataset.compdesc!==undefined){ const it=f.competencies.items.find(x=>x.id===t.dataset.compdesc); if(it){ it.desc=t.value; save(); } }
+  else if(t.dataset.qans!==undefined){ b.questions[t.dataset.qans]=t.value; }
+  else if(t.dataset.meta!==undefined){ b.meta[t.dataset.meta]=t.value; }
 });
-document.addEventListener("change",e=>{
-  const t=e.target;
-  if(t.dataset.type!==undefined){ const q=byId(t.dataset.type); if(q){ q.type=t.value; if(NEEDS_OPTS(t.value)&&!q.options) q.options=["Option A","Option B"]; if(IS_SCORE(t.value)){ q.scale=q.scale||5; q.weight=q.weight||1;} save(); renderBuilder(); } }
-});
+document.addEventListener("change",e=>{ if(e.target.dataset && e.target.dataset.meta!==undefined) bag().meta[e.target.dataset.meta]=e.target.value; });
 
-// clicks: kebab, menu actions, reorder arrows
+/* ======================================================================
+   CLICK handlers
+   ====================================================================== */
 document.addEventListener("click",e=>{
-  const t=e.target.closest("[data-kebab],[data-act],[data-up],[data-down],[data-close]");
-  // close open menu if clicking elsewhere
-  if(!e.target.closest(".menu") && !e.target.closest("[data-kebab]") && openMenuFor){ openMenuFor=null; renderBuilder(); }
-  if(!t) return;
-  if(t.dataset.close){ $("#"+t.dataset.close).classList.remove("show"); return; }
-  if(t.dataset.kebab!==undefined){ openMenuFor = (openMenuFor===t.dataset.kebab)?null:t.dataset.kebab; renderBuilder(); return; }
-  if(t.dataset.up!==undefined){ moveQ(+t.dataset.up,-1); return; }
-  if(t.dataset.down!==undefined){ moveQ(+t.dataset.down,1); return; }
-  if(t.dataset.act){
-    const id=t.dataset.id, i=cfg.questions.findIndex(q=>q.id===id);
+  const t=e.target;
+
+  // role chooser
+  const pick=t.closest("[data-pick]");
+  if(pick){ active=pick.dataset.pick; localStorage.setItem(ROLE_KEY,active); render(); return; }
+
+  // modal close
+  const cl=t.closest("[data-close]"); if(cl){ $("#"+cl.dataset.close).classList.remove("show"); return; }
+
+  // evaluation select (ignore when editing the label input)
+  const opt=t.closest("[data-evalidx]");
+  if(opt && !t.closest(".eval-edit")){ bag().evalIdx=+opt.dataset.evalidx; $$("[data-evalidx]").forEach(x=>x.classList.remove("sel")); opt.classList.add("sel"); return; }
+
+  // competency thumb
+  const th=t.closest("[data-compthumb]");
+  if(th){ const id=th.dataset.compthumb; bag().comps[id]=+th.dataset.val; $$(`[data-compthumb="${id}"]`).forEach(x=>x.classList.remove("sel")); th.classList.add("sel"); updateScore(); return; }
+
+  // competency add / delete
+  const cadd=t.closest("[data-compadd]");
+  if(cadd){ curForm().competencies.items.push({id:uid(),name:"",desc:""}); save(); renderForm(); return; }
+  const cdel=t.closest("[data-compdel]");
+  if(cdel){ const items=curForm().competencies.items; const i=items.findIndex(x=>x.id===cdel.dataset.compdel); if(i>=0){ items.splice(i,1); delete bag().comps[cdel.dataset.compdel]; save(); renderForm(); } return; }
+
+  // close open kebab menu on outside click
+  if(openMenuFor && !t.closest(".menu") && !t.closest("[data-kebab]")){ openMenuFor=null; renderForm(); }
+
+  // kebab toggle
+  const kb=t.closest("[data-kebab]");
+  if(kb){ openMenuFor = openMenuFor===kb.dataset.kebab ? null : kb.dataset.kebab; renderForm(); return; }
+
+  // kebab actions
+  const act=t.closest("[data-act]");
+  if(act){
+    const qs=curForm().questions, id=act.dataset.id, i=qs.findIndex(q=>q.id===id);
     if(i<0) return;
-    if(t.dataset.act==="require"){ cfg.questions[i].required=!cfg.questions[i].required; }
-    else if(t.dataset.act==="duplicate"){ const copy=JSON.parse(JSON.stringify(cfg.questions[i])); copy.id=uid(); cfg.questions.splice(i+1,0,copy); }
-    else if(t.dataset.act==="delete"){ if(!confirm("Delete this question?")) return; cfg.questions.splice(i,1); }
-    openMenuFor=null; save(); renderBuilder();
+    if(act.dataset.act==="duplicate"){ const c=JSON.parse(JSON.stringify(qs[i])); c.id=uid(); qs.splice(i+1,0,c); }
+    else if(act.dataset.act==="delete"){ if(!confirm("Delete this question?")) return; qs.splice(i,1); delete bag().questions[id]; }
+    openMenuFor=null; save(); renderForm(); return;
   }
 });
-function byId(id){ return cfg.questions.find(q=>q.id===id); }
-function moveQ(idx,dir){ const a=cfg.questions,j=idx+dir; if(j<0||j>=a.length) return; [a[idx],a[j]]=[a[j],a[idx]]; save(); renderBuilder(); }
 
-/* ---------- drag & drop reorder ---------- */
+function addQuestion(){
+  curForm().questions.push({id:uid(),label:""}); save(); renderForm();
+  const cards=$$("#qcards .q-card"), last=cards[cards.length-1];
+  if(last){ last.scrollIntoView({behavior:"smooth",block:"center"}); const inp=last.querySelector("[data-qlabel]"); if(inp) inp.focus(); }
+}
+
+/* drag reorder (sortable forms only) */
 let dragIdx=null;
 document.addEventListener("dragstart",e=>{ const g=e.target.closest(".grip"); if(!g) return; const card=g.closest(".q-card"); dragIdx=+card.dataset.idx; card.classList.add("dragging"); e.dataTransfer.effectAllowed="move"; });
-document.addEventListener("dragend",e=>{ $$(".q-card").forEach(c=>c.classList.remove("dragging","drop-target")); dragIdx=null; });
+document.addEventListener("dragend",()=>{ $$(".q-card").forEach(c=>c.classList.remove("dragging","drop-target")); dragIdx=null; });
 document.addEventListener("dragover",e=>{ const card=e.target.closest(".q-card"); if(card&&dragIdx!=null){ e.preventDefault(); $$(".q-card").forEach(c=>c.classList.remove("drop-target")); card.classList.add("drop-target"); } });
-document.addEventListener("drop",e=>{ const card=e.target.closest(".q-card"); if(card&&dragIdx!=null){ e.preventDefault(); const to=+card.dataset.idx; const a=cfg.questions; const [m]=a.splice(dragIdx,1); a.splice(to,0,m); dragIdx=null; save(); renderBuilder(); } });
+document.addEventListener("drop",e=>{ const card=e.target.closest(".q-card"); if(card&&dragIdx!=null){ e.preventDefault(); const to=+card.dataset.idx, qs=curForm().questions; const [m]=qs.splice(dragIdx,1); qs.splice(to,0,m); dragIdx=null; save(); renderForm(); } });
 
-function autoGrow(el){ el.style.height="auto"; el.style.height=(el.scrollHeight)+"px"; }
-
-/* ====================================================================
-   SUBMIT (fill mode)
-   ==================================================================== */
+/* ======================================================================
+   SUBMIT
+   ====================================================================== */
 function collect(){
-  const data={meta:{},answers:[],recommendation:"",score:null,submittedAt:new Date().toISOString()};
-  const missing=[];
-  cfg.meta.forEach(m=>{ const el=document.querySelector(`[data-meta="${cssEsc(m.label)}"]`); const v=el?el.value.trim():""; data.meta[m.label]=v; if(m.required&&!v) missing.push(m.label); });
+  const f=curForm(), b=bag(), missing=[], data={meta:{},answers:[],recommendation:"",evalScore:null,score:null,submittedAt:new Date().toISOString()};
+  f.meta.forEach(m=>{ const el=document.querySelector(`[data-meta="${cssEsc(m.label)}"]`); const v=el?String(el.value).trim():""; data.meta[m.label]=v; if(m.required&&!v) missing.push(m.label); });
 
-  const ev=$("#evalValue")?$("#evalValue").value:""; data.recommendation=ev?ev.split("|")[1]:""; data.evalScore=ev?+ev.split("|")[0]:null;
-  if(!data.recommendation) missing.push(cfg.evaluation.label);
+  if(b.evalIdx==null) missing.push(f.evaluation.label);
+  else { const o=f.evaluation.options[b.evalIdx]; data.recommendation=o.label; data.evalScore=o.score; }
 
-  let total=0,max=0;
-  cfg.questions.forEach(q=>{
-    let val="";
-    if(q.type==="checkbox") val=$$(`input[type=checkbox][data-q="${q.id}"]:checked`).map(c=>c.value).join("; ");
-    else if(IS_SCORE(q.type)||q.type==="yesno"||q.type==="multiple"){ const s=document.querySelector(`input[data-q="${q.id}"]:checked`); val=s?s.value:""; }
-    else { const el=document.querySelector(`[data-q="${q.id}"]`); val=el?el.value.trim():""; }
-    if(q.required&&!val) missing.push(q.label||"(untitled)");
-    if(IS_SCORE(q.type)){ const w=+(q.weight||1),s=+(q.scale||5); max+=s*w; if(val) total+=(+val)*w; }
-    data.answers.push({section:"", question:q.label, type:q.type, value:val});
+  // competencies (all required)
+  let ctot=0,cmax=f.competencies.items.length*4;
+  f.competencies.items.forEach(it=>{
+    const v=b.comps[it.id];
+    if(!v) missing.push((it.name||"Competency")+" (scorecard)");
+    else { ctot+=v; data.answers.push({section:f.competencies.title, question:it.name, type:"scorecard", value:(THUMBS.find(t=>t.v===v)||{}).title}); }
   });
-  data.score = max>0?{total,max,percent:Math.round(total/max*100)}:null;
+  data.score = cmax?{total:ctot,max:cmax,percent:Math.round(ctot/cmax*100)}:null;
+
+  // questions (all required, skip untitled)
+  f.questions.forEach(q=>{ if(!q.label.trim()) return; const v=(b.questions[q.id]||"").trim(); if(!v) missing.push(q.label); data.answers.push({section:"", question:q.label, type:"paragraph", value:v}); });
+
   return {data,missing};
 }
 function cssEsc(s){ return String(s).replace(/"/g,'\\"'); }
@@ -529,69 +533,59 @@ function cssEsc(s){ return String(s).replace(/"/g,'\\"'); }
 async function submitForm(){
   const {data,missing}=collect();
   if(missing.length){ toast("Please complete: "+missing.slice(0,3).join(", ")+(missing.length>3?` +${missing.length-3} more`:""),"err"); return; }
-  const payload={...data, formTitle:cfg.title, recipients:cfg.recipients.split(",").map(s=>s.trim()).filter(Boolean)};
+  const f=curForm();
+  const payload={...data, formTitle:f.title+" ("+f.role+")", role:f.role, recipients:cfg.recipients.split(",").map(s=>s.trim()).filter(Boolean)};
 
   if(cfg.endpoint){
-    const b=$("#btnSubmit"); b.disabled=true; b.textContent="Submitting…";
+    const btn=$("#btnSubmit"); btn.disabled=true; btn.textContent="Submitting…";
     try{
       await fetch(cfg.endpoint,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(payload)});
-      toast("Submitted — saved to Google Sheet & emailed the team ✔","ok"); renderFill();
+      toast(f.role+" feedback submitted — saved to Google Sheet & emailed ✔","ok");
+      ans[active]={meta:{},evalIdx:null,questions:{},comps:{}}; renderForm();
     }catch(err){ toast("Network error — downloading a backup copy","err"); downloadBackup(payload); }
-    finally{ b.disabled=false; b.textContent="Submit feedback"; }
+    finally{ btn.disabled=false; btn.textContent="Submit feedback"; }
   } else {
     downloadBackup(payload); openMailDraft(payload);
     toast("No backend set — downloaded a file & opened an email draft. See README to enable auto Sheet+email.","");
   }
 }
 function downloadBackup(p){
-  const rows=[["Field","Value"]];
+  const rows=[["Form",p.formTitle],["Field","Value"]];
   Object.entries(p.meta).forEach(([k,v])=>rows.push([k,v]));
-  rows.push([cfg.evaluation.label,p.recommendation]);
-  if(p.score) rows.push(["Score",`${p.score.total}/${p.score.max} (${p.score.percent}%)`]);
-  p.answers.forEach(a=>rows.push([a.question,a.value]));
+  rows.push([curForm().evaluation.label,p.recommendation]);
+  if(p.score) rows.push(["Scorecard",`${p.score.total}/${p.score.max} (${p.score.percent}%)`]);
+  p.answers.forEach(a=>rows.push([(a.section?`[${a.section}] `:"")+a.question,a.value]));
   rows.push(["Submitted at",p.submittedAt]);
   const csv=rows.map(r=>r.map(c=>`"${String(c??"").replace(/"/g,'""')}"`).join(",")).join("\r\n");
   const blob=new Blob(["﻿"+csv],{type:"text/csv;charset=utf-8"});
   const first=p.meta[Object.keys(p.meta)[0]]||"candidate";
-  const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=`Feedback_${first.replace(/\W+/g,"_")}_${p.submittedAt.slice(0,10)}.csv`; a.click();
+  const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=`${curForm().role.replace(/\W+/g,"")}_${String(first).replace(/\W+/g,"_")}_${p.submittedAt.slice(0,10)}.csv`; a.click();
 }
 function openMailDraft(p){
-  const lines=[]; Object.entries(p.meta).forEach(([k,v])=>lines.push(`${k}: ${v}`));
-  lines.push(`${cfg.evaluation.label}: ${p.recommendation}`);
-  if(p.score) lines.push(`Score: ${p.score.total}/${p.score.max} (${p.score.percent}%)`);
-  lines.push(""); p.answers.forEach(a=>{ if(a.value) lines.push(`• ${a.question}: ${a.value}`); });
-  const subj=`Interview feedback — ${p.meta[Object.keys(p.meta)[0]]||""}`;
+  const lines=[`Form: ${p.formTitle}`,""]; Object.entries(p.meta).forEach(([k,v])=>lines.push(`${k}: ${v}`));
+  lines.push(`${curForm().evaluation.label}: ${p.recommendation}`);
+  if(p.score) lines.push(`Scorecard: ${p.score.total}/${p.score.max} (${p.score.percent}%)`);
+  lines.push(""); p.answers.forEach(a=>{ if(a.value) lines.push(`• ${(a.section?`[${a.section}] `:"")+a.question}: ${a.value}`); });
+  const subj=`${p.role} feedback — ${p.meta[Object.keys(p.meta)[0]]||""}`;
   window.open(`mailto:${encodeURIComponent(p.recipients.join(","))}?subject=${encodeURIComponent(subj)}&body=${encodeURIComponent(lines.join("\n"))}`,"_blank");
 }
 
-/* ====================================================================
-   TABS + SETTINGS
-   ==================================================================== */
-$("#tabEdit").addEventListener("click",()=>{ mode="edit"; removeFooter(); render(); });
-$("#tabFill").addEventListener("click",()=>{ mode="fill"; render(); });
-
+/* ======================================================================
+   header / settings
+   ====================================================================== */
+$("#btnSwitch").addEventListener("click",()=>{ active=null; localStorage.removeItem(ROLE_KEY); openMenuFor=null; render(); });
 $("#btnSettings").addEventListener("click",()=>{
-  $("#setRecipients").value=cfg.recipients;
-  $("#setEndpoint").value=cfg.endpoint;
-  $("#setBrand").value=cfg.brand;
-  $("#setMeta").value=cfg.meta.map(m=>`${m.label}${m.type==="date"?":date":""}${m.required?"*":""}`).join("\n");
-  $("#setEval").value=cfg.evaluation.options.map(o=>`${o.score} | ${o.label}`).join("\n");
+  $("#setRecipients").value=cfg.recipients; $("#setEndpoint").value=cfg.endpoint; $("#setBrand").value=cfg.brand;
   $("#settingsModal").classList.add("show");
 });
 $("#setSave").addEventListener("click",()=>{
-  cfg.recipients=$("#setRecipients").value;
-  cfg.endpoint=$("#setEndpoint").value.trim();
-  cfg.brand=$("#setBrand").value.trim()||cfg.brand;
-  const metaLines=$("#setMeta").value.split("\n").map(s=>s.trim()).filter(Boolean);
-  if(metaLines.length) cfg.meta=metaLines.map(l=>{ const req=/\*/.test(l); const isDate=/:date/i.test(l); const label=l.replace(/:date/i,"").replace(/\*/g,"").trim(); return {label,required:req,type:isDate?"date":"text"}; });
-  const evLines=$("#setEval").value.split("\n").map(s=>s.trim()).filter(Boolean);
-  if(evLines.length) cfg.evaluation.options=evLines.map(l=>{ const [sc,...rest]=l.split("|"); return {score:parseInt(sc)||0,label:(rest.join("|")||"").trim()}; });
+  cfg.recipients=$("#setRecipients").value; cfg.endpoint=$("#setEndpoint").value.trim(); cfg.brand=$("#setBrand").value.trim()||cfg.brand;
   save(); $("#settingsModal").classList.remove("show"); render(); toast("Settings saved","ok");
 });
-$("#btnExportCfg").addEventListener("click",()=>{ const b=new Blob([JSON.stringify(cfg,null,2)],{type:"application/json"}); const a=document.createElement("a"); a.href=URL.createObjectURL(b); a.download="feedback-form-config.json"; a.click(); });
+$("#btnExportCfg").addEventListener("click",()=>{ const b=new Blob([JSON.stringify(cfg,null,2)],{type:"application/json"}); const a=document.createElement("a"); a.href=URL.createObjectURL(b); a.download="feedback-forms-config.json"; a.click(); });
 $("#btnImportCfg").addEventListener("click",()=>$("#importFile").click());
-$("#importFile").addEventListener("change",ev=>{ const f=ev.target.files[0]; if(!f) return; const r=new FileReader(); r.onload=()=>{ try{ cfg=JSON.parse(r.result); save(); $("#settingsModal").classList.remove("show"); render(); toast("Config imported","ok"); }catch(e){ toast("Invalid JSON","err"); } }; r.readAsText(f); });
-$("#btnFactory").addEventListener("click",()=>{ if(confirm("Reset the entire form to default?")){ cfg=defaultConfig(); save(); $("#settingsModal").classList.remove("show"); render(); } });
+$("#importFile").addEventListener("change",ev=>{ const file=ev.target.files[0]; if(!file) return; const r=new FileReader(); r.onload=()=>{ try{ cfg=JSON.parse(r.result); save(); $("#settingsModal").classList.remove("show"); render(); toast("Config imported","ok"); }catch(e){ toast("Invalid JSON","err"); } }; r.readAsText(file); });
+$("#btnFactory").addEventListener("click",()=>{ if(confirm("Reset BOTH forms to default?")){ cfg=defaultConfig(); save(); $("#settingsModal").classList.remove("show"); render(); } });
 $$(".modal").forEach(m=>m.addEventListener("click",e=>{ if(e.target===m) m.classList.remove("show"); }));
 
 render();
