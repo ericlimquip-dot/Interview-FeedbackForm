@@ -364,7 +364,7 @@ function compCard(f){
     ${c.items.map(it=>`
       <div class="comp-row" data-compid="${it.id}">
         <div class="comp-info">
-          <input class="comp-name" data-compname="${it.id}" value="${esc(it.name)}" placeholder="Competency" /><br>
+          <input class="comp-name" data-compname="${it.id}" value="${esc(it.name)}" placeholder="Competency name (required)" /><br>
           <input class="comp-desc" data-compdesc="${it.id}" value="${esc(it.desc||'')}" placeholder="Add description" />
         </div>
         <div class="thumbs">
@@ -470,7 +470,8 @@ document.addEventListener("click",e=>{
 
   // competency add / delete
   const cadd=t.closest("[data-compadd]");
-  if(cadd){ curForm().competencies.items.push({id:uid(),name:"",desc:""}); save(); renderForm(); return; }
+  if(cadd){ curForm().competencies.items.push({id:uid(),name:"",desc:""}); save(); renderForm();
+    const names=$$(".comp-name"), last=names[names.length-1]; if(last){ last.scrollIntoView({behavior:"smooth",block:"center"}); last.focus(); } return; }
   const cdel=t.closest("[data-compdel]");
   if(cdel){ const items=curForm().competencies.items; const i=items.findIndex(x=>x.id===cdel.dataset.compdel); if(i>=0){ items.splice(i,1); delete bag().comps[cdel.dataset.compdel]; save(); renderForm(); } return; }
 
@@ -515,12 +516,14 @@ function collect(){
   if(b.evalIdx==null) missing.push(f.evaluation.label);
   else { const o=f.evaluation.options[b.evalIdx]; data.recommendation=o.label; data.evalScore=o.score; }
 
-  // competencies (all required)
+  // competencies (name AND rating both required)
   let ctot=0,cmax=f.competencies.items.length*4;
   f.competencies.items.forEach(it=>{
+    const nm=(it.name||"").trim();
     const v=b.comps[it.id];
-    if(!v) missing.push((it.name||"Competency")+" (scorecard)");
-    else { ctot+=v; const th=THUMBS.find(t=>t.v===v)||{}; data.answers.push({section:f.competencies.title, question:it.name, type:"scorecard", value:((th.icon?th.icon+" ":"")+(th.label||""))}); }
+    if(!nm){ missing.push("Competency name (name each competency, or remove it)"); return; }
+    if(!v){ missing.push(nm+" (rating)"); return; }
+    ctot+=v; const th=THUMBS.find(t=>t.v===v)||{}; data.answers.push({section:f.competencies.title, question:nm, type:"scorecard", value:((th.icon?th.icon+" ":"")+(th.label||""))});
   });
   data.score = cmax?{total:ctot,max:cmax,percent:Math.round(ctot/cmax*100)}:null;
 
