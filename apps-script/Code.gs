@@ -22,9 +22,9 @@ var FOLDER_ID       = "";   // Drive folder for per-submission files
 var EMAIL_SUBJECT_PREFIX = "Interview Feedback";
 // Recipients fallback if the form doesn't send any:
 var DEFAULT_RECIPIENTS = "hr@msbu.co.id";
-// Optional: a PUBLIC URL to the MSBU logo (PNG). If set, it shows in the email header;
-// otherwise the email falls back to a clean "M | S | B | U" text wordmark.
-var LOGO_URL = "";
+// Public URL to the MSBU logo (PNG) — shown in the email header (fetched + inlined).
+// Falls back to a clean "M | S | B | U" text wordmark if this ever fails to load.
+var LOGO_URL = "https://msbu.co.id/hs-fs/hubfs/W_Primary%20with%20no%20Slogan_No%20Bg2x.png";
 
 function doPost(e) {
   try {
