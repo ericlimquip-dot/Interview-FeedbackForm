@@ -10,12 +10,13 @@ button returns to the picker). The other form stays empty and sends nothing — 
 recruiter's submission and the hiring manager's submission are separate. Each form is
 editable and fillable at once: edit question text inline, add/delete questions (the
 Recruiter form can also drag-reorder), fill in answers, and submit. On submit the answers
-are saved to a **Google Sheet** and **emailed as an Excel (.xlsx)** to the team.
+are saved to a **Google Sheet** and the team is **emailed a summary with a link to that
+submission's own tidy Google Sheet** (no attachment).
 
-Each form contains: locked instructions, required **candidate details** (with an
-Initial/Advance **Interview stage** dropdown), a selectable + editable **evaluation**
-(Strong Hire → Strong No Hire), a **Core Competencies** scorecard (thumb rating per row,
-add/remove rows), and required paragraph questions.
+Each form contains: locked instructions, required **candidate details** (candidate name,
+position, interviewer, date), a selectable + editable **evaluation** (Strong Hire → Strong
+No Hire), a **Core Competencies** scorecard (thumb rating per row, add/remove rows), and
+required paragraph questions.
 
 ## Files
 
@@ -35,44 +36,35 @@ Open `Interview Feedback Form.html` in a browser and choose **Recruiter** or
 - **Evaluation** — click a row to select it; the labels are editable.
 - **Core Competencies** — rate each row 👎👎 / 👎 / 👍 / 👍👍, edit names/descriptions,
   add or remove rows with **＋ Add another**.
-- **Settings** — email recipients, the backend URL, brand label, and **export/import**
-  the whole configuration (both forms) as JSON.
+- **Settings** — email recipients (default `hr@msbu.co.id`) and brand label. The Apps
+  Script backend URL is baked into the file, so there's nothing to configure to make
+  submissions work.
 - Everything is saved in the browser's `localStorage`. Your typed *answers* are cleared
-  after a successful submit; the *form setup* persists. Use **Export config** + commit
-  the JSON if you want one shared source of truth across machines.
+  after a successful submit; the *form setup* persists per machine.
 
-## Enabling auto Google Sheet + email (one-time setup)
+## Backend (Google Apps Script)
 
-A browser page can't email or create spreadsheets by itself, so the form posts to a
-tiny Google Apps Script that does both under your Google account.
+The form posts each submission to a Google Apps Script web app (deployed under the MSBU
+Google account) which:
+- appends a **formatted row** to the master log **MSBU Interview Feedback — Master Log**
+  (styled header, frozen top row, zebra striping),
+- creates a **tidy, grouped per-submission spreadsheet** (Candidate details / Evaluation /
+  Core Competencies / Feedback) in the Drive folder **MSBU Interview Feedback Submissions**, and
+- emails the recipients a summary **with a link to that submission's sheet** (no attachment).
 
-1. Go to **https://script.google.com** → **New project**.
-2. Delete the placeholder code, paste the contents of `apps-script/Code.gs`, and save.
-3. Click **Deploy → New deployment → Web app**:
-   - **Execute as:** Me
-   - **Who has access:** Anyone
-4. Click **Deploy**, approve the authorization prompts (Sheets, Drive, Gmail).
-5. Copy the **Web app URL** (ends in `/exec`).
-6. In the form → **Settings → Backend URL**, paste that URL and **Save settings**.
+The web app URL is already baked into the HTML and access is set to **Anyone**, so the form
+works with no per-user setup. Recipients are sent from the form (default `hr@msbu.co.id`) and
+are editable in **Settings** with no redeploy.
 
-Now every submission:
-- appends a row to a master log sheet (**MSBU Interview Feedback — Master Log**),
-- creates a per-candidate spreadsheet in a Drive folder, and
-- emails the recipients with the `.xlsx` attached.
-
-> Recipients are sent from the form (`erika@msbukonsultan.id, hr@msbu.co.id, e@msbu.co.id`
-> by default). Change them any time in **Settings** — no redeploy needed.
-
-### Fallback (no backend configured)
-
-If **Backend URL** is left blank, Submit will instead **download a CSV** (opens in
-Google Sheets/Excel) and **open a pre-filled email draft** to the recipients — so the
-form is still usable before the Apps Script is deployed.
+**If you edit `apps-script/Code.gs`**, publish a new version so the change goes live:
+**Deploy ▸ Manage deployments ▸ ✏ Edit ▸ Version: New version ▸ Deploy** (the `/exec` URL
+stays the same). Verify the backend any time by opening the `/exec` URL — it returns
+`{"ok":true,...}`. The editor's **`runTest`** function exercises the whole path
+(sheet + folder + email) and surfaces real errors.
 
 ## Notes
 
-- The `mode:"no-cors"` fetch means the browser won't show the script's JSON response;
-  a success toast is shown optimistically. Check the master sheet to confirm receipt.
-- To share one identical form setup across the team: configure it once, **Export
-  config**, and have others **Import config** (or host the HTML on a shared drive /
-  intranet / GitHub Pages).
+- The submit uses a `no-cors` request, so the browser can't read the script's reply; a
+  success toast is shown optimistically. Check the master sheet to confirm receipt.
+- To share the forms with the team, host the HTML at one URL (e.g. GitHub Pages) or send
+  the file — the backend URL and defaults are already baked in.

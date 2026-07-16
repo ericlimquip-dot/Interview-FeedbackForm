@@ -21,7 +21,7 @@ var MASTER_SHEET_ID = "";   // master log spreadsheet
 var FOLDER_ID       = "";   // Drive folder for per-submission files
 var EMAIL_SUBJECT_PREFIX = "Interview Feedback";
 // Recipients fallback if the form doesn't send any:
-var DEFAULT_RECIPIENTS = "erika@msbukonsultan.id, hr@msbu.co.id, e@msbu.co.id";
+var DEFAULT_RECIPIENTS = "hr@msbu.co.id";
 
 function doPost(e) {
   try {
@@ -45,35 +45,31 @@ function doPost(e) {
     }
     var row = headers.map(function (h) { return flat[h] !== undefined ? flat[h] : ""; });
     sheet.appendRow(row);
+    formatMaster(sheet);
 
-    // ---- per-submission spreadsheet + xlsx export ----
+    // ---- per-submission spreadsheet (tidy, readable layout) ----
     var candidate = firstMetaValue(payload) || "candidate";
     var stamp = Utilities.formatDate(new Date(), Session.getScriptTimeZone(), "yyyy-MM-dd_HH-mm");
     var copyName = "Feedback - " + candidate + " - " + stamp;
 
-    var perSheet = SpreadsheetApp.create(copyName);
-    var ps = perSheet.getActiveSheet();
-    ps.getRange(1, 1, headers.length, 2).setValues(headers.map(function (h) { return [h, flat[h] || ""]; }));
-    ps.setColumnWidth(1, 240); ps.setColumnWidth(2, 420);
+    var perSS = SpreadsheetApp.create(copyName);
+    writePerSubmission(perSS.getActiveSheet(), payload);
     SpreadsheetApp.flush();
 
-    var file = DriveApp.getFileById(perSheet.getId());
+    var file = DriveApp.getFileById(perSS.getId());
     var folder = getFolder();
     if (folder) { folder.addFile(file); DriveApp.getRootFolder().removeFile(file); }
 
-    var xlsx = exportXlsx(perSheet.getId(), copyName);
-
-    // ---- email ----
+    // ---- email (spreadsheet link only, no attachment) ----
     var recipients = (payload.recipients && payload.recipients.length)
       ? payload.recipients.join(",") : DEFAULT_RECIPIENTS;
     MailApp.sendEmail({
       to: recipients,
       subject: EMAIL_SUBJECT_PREFIX + " — " + candidate + " (" + (payload.recommendation || "n/a") + ")",
-      htmlBody: buildEmailHtml(payload, perSheet.getUrl()),
-      attachments: [xlsx]
+      htmlBody: buildEmailHtml(payload, perSS.getUrl())
     });
 
-    return json({ ok: true, sheet: perSheet.getUrl() });
+    return json({ ok: true, sheet: perSS.getUrl() });
   } catch (err) {
     return json({ ok: false, error: String(err) });
   }
@@ -162,14 +158,71 @@ function getFolder() {
   return f;
 }
 
-function exportXlsx(spreadsheetId, name) {
-  var url = "https://docs.google.com/feeds/download/spreadsheets/Export?key="
-          + spreadsheetId + "&exportFormat=xlsx";
-  var resp = UrlFetchApp.fetch(url, {
-    headers: { Authorization: "Bearer " + ScriptApp.getOAuthToken() },
-    muteHttpExceptions: true
+/* Tidy the master log: styled header, frozen top row, zebra striping, sane widths. */
+function formatMaster(sheet) {
+  var lastCol = sheet.getLastColumn(), lastRow = sheet.getLastRow();
+  if (lastCol < 1 || lastRow < 1) return;
+  var all = sheet.getRange(1, 1, lastRow, lastCol);
+  all.setVerticalAlignment("top").setWrap(true).setFontFamily("Arial");
+  try { if (sheet.getBandings().length === 0) all.applyRowBanding(SpreadsheetApp.BandingTheme.LIGHT_GREY, true, false); } catch (e) {}
+  var header = sheet.getRange(1, 1, 1, lastCol);
+  header.setFontWeight("bold").setFontColor("#ffffff").setBackground("#4244e0").setVerticalAlignment("middle");
+  sheet.setRowHeight(1, 32);
+  sheet.setFrozenRows(1);
+  sheet.autoResizeColumns(1, lastCol);
+  for (var c = 1; c <= lastCol; c++) {
+    var w = sheet.getColumnWidth(c);
+    if (w > 340) sheet.setColumnWidth(c, 340);
+    else if (w < 100) sheet.setColumnWidth(c, 100);
+  }
+}
+
+/* Write one submission as a clean, grouped, bordered sheet. */
+function writePerSubmission(sheet, p) {
+  sheet.setName("Feedback");
+  sheet.clear();
+  var rows = [], sectionRows = [];
+  function add(a, b) { rows.push([a, (b === undefined || b === null) ? "" : b]); return rows.length; }
+  function section(t) { sectionRows.push(add(t, "")); }
+
+  add(p.formTitle || "Interview Feedback", "");                 // row 1: title
+  add("Submitted", fmtDate(p.submittedAt));
+  section("CANDIDATE DETAILS");
+  Object.keys(p.meta || {}).forEach(function (k) { add(k, p.meta[k]); });
+  section("EVALUATION");
+  add("Overall recommendation", p.recommendation || "");
+  if (p.score) add("Scorecard", p.score.total + " / " + p.score.max + "  (" + p.score.percent + "%)");
+  var comps = (p.answers || []).filter(function (a) { return a.section; });
+  if (comps.length) { section("CORE COMPETENCIES"); comps.forEach(function (a) { add(a.question, a.value); }); }
+  var qs = (p.answers || []).filter(function (a) { return !a.section; });
+  if (qs.length) { section("FEEDBACK"); qs.forEach(function (a) { add(a.question, a.value); }); }
+
+  var n = rows.length;
+  sheet.getRange(1, 1, n, 2).setValues(rows);
+  sheet.setColumnWidth(1, 260); sheet.setColumnWidth(2, 520);
+  var body = sheet.getRange(1, 1, n, 2);
+  body.setVerticalAlignment("top").setWrap(true).setFontFamily("Arial");
+  body.setBorder(true, true, true, true, true, true, "#e2e2e2", SpreadsheetApp.BorderStyle.SOLID);
+
+  // title bar
+  sheet.getRange(1, 1, 1, 2).merge().setFontSize(15).setFontWeight("bold")
+       .setFontColor("#ffffff").setBackground("#4244e0");
+  sheet.setRowHeight(1, 40);
+  sheet.getRange(2, 1, 1, 2).setFontColor("#777777");   // "Submitted" line, subtle
+  // section bars
+  sectionRows.forEach(function (r) {
+    sheet.getRange(r, 1, 1, 2).merge().setFontWeight("bold").setBackground("#eef0ff")
+         .setFontColor("#2b2b2b").setFontSize(11);
+    sheet.setRowHeight(r, 26);
   });
-  return resp.getBlob().setName(name + ".xlsx");
+  // bold the label column
+  sheet.getRange(1, 1, n, 1).setFontWeight("bold");
+  sheet.setFrozenRows(1);
+}
+
+function fmtDate(iso) {
+  try { return Utilities.formatDate(new Date(iso), Session.getScriptTimeZone(), "yyyy-MM-dd HH:mm"); }
+  catch (e) { return iso || ""; }
 }
 
 function buildEmailHtml(p, sheetUrl) {
@@ -190,7 +243,7 @@ function buildEmailHtml(p, sheetUrl) {
     + "<table style='border-collapse:collapse;font-size:14px'>" + rows + ans + "</table>"
     + (p.overallComments ? "<p style='margin-top:14px'><b>Summary:</b><br>" + esc(p.overallComments) + "</p>" : "")
     + "<p style='margin-top:16px'><a href='" + sheetUrl + "'>Open the Google Sheet for this submission</a></p>"
-    + "<p style='color:#999;font-size:12px'>The .xlsx copy is attached. Full log kept in the master sheet.</p></div>";
+    + "<p style='color:#999;font-size:12px'>Full log kept in the master sheet.</p></div>";
 }
 
 function esc(s) {

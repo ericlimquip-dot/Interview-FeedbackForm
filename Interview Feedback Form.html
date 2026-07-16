@@ -153,23 +153,15 @@
     <p class="hint" style="margin:0 0 8px">Shared across both forms.</p>
     <label class="field-label">Email recipients (comma separated)</label>
     <input type="text" id="setRecipients" />
-    <label class="field-label">Backend URL (Google Apps Script Web App)</label>
-    <input type="text" id="setEndpoint" placeholder="https://script.google.com/macros/s/……/exec" />
-    <p class="hint">Leave blank to fall back to Excel download + email draft.</p>
     <label class="field-label">Company / brand label</label>
     <input type="text" id="setBrand" />
     <div style="display:flex;gap:8px;justify-content:space-between;margin-top:18px;flex-wrap:wrap">
-      <div style="display:flex;gap:8px">
-        <button class="ghost" id="btnExportCfg">Export config</button>
-        <button class="ghost" id="btnImportCfg">Import config</button>
-        <button class="ghost" id="btnFactory" style="color:var(--red);border-color:#f5c6c3">Reset default</button>
-      </div>
+      <button class="ghost" id="btnFactory" style="color:var(--red);border-color:#f5c6c3">Reset default</button>
       <div style="display:flex;gap:8px">
         <button class="ghost" data-close="settingsModal">Close</button>
         <button class="primary" id="setSave">Save</button>
       </div>
     </div>
-    <input type="file" id="importFile" accept="application/json" class="hidden" />
   </div>
 </div>
 
@@ -220,7 +212,7 @@ function compsDefault(){
 function defaultConfig(){
   return {
     brand:"MSBU",
-    recipients:"erika@msbukonsultan.id, hr@msbu.co.id, e@msbu.co.id",
+    recipients:"hr@msbu.co.id",
     endpoint:BACKEND_URL,
     forms:{
       recruiter:{
@@ -268,6 +260,7 @@ function migrate(c){
   try{
     Object.values(c.forms||{}).forEach(f=>{ if(Array.isArray(f.meta)) f.meta=f.meta.filter(m=>m.label!=="Interview stage"); });
     if(!c.endpoint) c.endpoint = BACKEND_URL;          // auto-fill Backend URL if empty
+    if(!c.recipMigrated){ c.recipients = "hr@msbu.co.id"; c.recipMigrated = true; }  // one-time default recipient
   }catch(e){}
   return c;
 }
@@ -585,16 +578,13 @@ function openMailDraft(p){
    ====================================================================== */
 $("#btnSwitch").addEventListener("click",()=>{ active=null; localStorage.removeItem(ROLE_KEY); openMenuFor=null; render(); });
 $("#btnSettings").addEventListener("click",()=>{
-  $("#setRecipients").value=cfg.recipients; $("#setEndpoint").value=cfg.endpoint; $("#setBrand").value=cfg.brand;
+  $("#setRecipients").value=cfg.recipients; $("#setBrand").value=cfg.brand;
   $("#settingsModal").classList.add("show");
 });
 $("#setSave").addEventListener("click",()=>{
-  cfg.recipients=$("#setRecipients").value; cfg.endpoint=$("#setEndpoint").value.trim(); cfg.brand=$("#setBrand").value.trim()||cfg.brand;
+  cfg.recipients=$("#setRecipients").value; cfg.brand=$("#setBrand").value.trim()||cfg.brand;
   save(); $("#settingsModal").classList.remove("show"); render(); toast("Settings saved","ok");
 });
-$("#btnExportCfg").addEventListener("click",()=>{ const b=new Blob([JSON.stringify(cfg,null,2)],{type:"application/json"}); const a=document.createElement("a"); a.href=URL.createObjectURL(b); a.download="feedback-forms-config.json"; a.click(); });
-$("#btnImportCfg").addEventListener("click",()=>$("#importFile").click());
-$("#importFile").addEventListener("change",ev=>{ const file=ev.target.files[0]; if(!file) return; const r=new FileReader(); r.onload=()=>{ try{ cfg=JSON.parse(r.result); save(); $("#settingsModal").classList.remove("show"); render(); toast("Config imported","ok"); }catch(e){ toast("Invalid JSON","err"); } }; r.readAsText(file); });
 $("#btnFactory").addEventListener("click",()=>{ if(confirm("Reset BOTH forms to default?")){ cfg=defaultConfig(); save(); $("#settingsModal").classList.remove("show"); render(); } });
 $$(".modal").forEach(m=>m.addEventListener("click",e=>{ if(e.target===m) m.classList.remove("show"); }));
 
