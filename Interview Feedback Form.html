@@ -82,8 +82,8 @@
   .comp-desc{border:0;font-size:13px;color:var(--muted);padding:0;background:transparent}
   .comp-desc:focus{outline:none;color:var(--ink)}
   .thumbs{display:flex;gap:6px}
-  .thumb{border:1px solid var(--line);background:var(--field-bg);border-radius:8px;width:52px;height:44px;font-size:18px;
-         cursor:pointer;display:grid;place-items:center;filter:grayscale(1);opacity:.55;transition:.12s;line-height:1}
+  .thumb{border:1px solid var(--line);background:var(--field-bg);border-radius:8px;min-width:60px;padding:0 8px;height:44px;font-size:16px;
+         cursor:pointer;display:grid;place-items:center;filter:grayscale(1);opacity:.55;transition:.12s;line-height:1;white-space:nowrap}
   .thumb:hover{opacity:1;border-color:var(--brand)}
   .thumb.sel{opacity:1;filter:none;background:#eef0ff;border-color:var(--brand)}
   .comp-del{border:0;background:transparent;color:var(--muted2);font-size:20px;cursor:pointer;line-height:1;padding:4px 6px}
@@ -189,10 +189,10 @@ const $  = (s,r=document)=>r.querySelector(s);
 const $$ = (s,r=document)=>[...r.querySelectorAll(s)];
 
 const THUMBS = [
-  {v:1, icon:"👎", title:"Strong No Hire"},
-  {v:2, icon:"👎", title:"No Hire"},
-  {v:3, icon:"👍", title:"Hire"},
-  {v:4, icon:"👍", title:"Strong Hire"},
+  {v:1, icon:"👎👎"},
+  {v:2, icon:"👎"},
+  {v:3, icon:"👍"},
+  {v:4, icon:"👍👍"},
 ];
 
 /* ---------------- default config ---------------- */
@@ -200,7 +200,6 @@ function metaDefault(){
   return [
     {label:"Candidate name",       required:true, type:"text"},
     {label:"Position applied for", required:true, type:"text"},
-    {label:"Interview stage",      required:true, type:"select", options:["Initial Call","Advance Call"]},
     {label:"Interviewer name",     required:true, type:"text"},
     {label:"Interview date",       required:true, type:"date"},
   ];
@@ -259,8 +258,14 @@ function defaultConfig(){
 }
 
 /* ---------------- state ---------------- */
-let cfg = load();
+let cfg = migrate(load());
 let active = localStorage.getItem(ROLE_KEY) || null;   // "recruiter" | "hiringManager" | null
+
+/* one-time cleanups to already-saved configs */
+function migrate(c){
+  try{ Object.values(c.forms||{}).forEach(f=>{ if(Array.isArray(f.meta)) f.meta=f.meta.filter(m=>m.label!=="Interview stage"); }); }catch(e){}
+  return c;
+}
 let ans = {};                                          // per-role answer bags (transient)
 let openMenuFor = null;
 
@@ -366,7 +371,7 @@ function compCard(f){
           <input class="comp-desc" data-compdesc="${it.id}" value="${esc(it.desc||'')}" placeholder="Add description" />
         </div>
         <div class="thumbs">
-          ${THUMBS.map(t=>`<button class="thumb" data-compthumb="${it.id}" data-val="${t.v}" title="${t.title}">${t.icon}</button>`).join("")}
+          ${THUMBS.map(t=>`<button class="thumb" data-compthumb="${it.id}" data-val="${t.v}">${t.icon}</button>`).join("")}
         </div>
         <button class="comp-del" data-compdel="${it.id}" title="Remove competency">×</button>
       </div>`).join("")}
