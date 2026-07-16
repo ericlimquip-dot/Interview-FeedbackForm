@@ -181,10 +181,10 @@ const $  = (s,r=document)=>r.querySelector(s);
 const $$ = (s,r=document)=>[...r.querySelectorAll(s)];
 
 const THUMBS = [
-  {v:1, icon:"👎👎"},
-  {v:2, icon:"👎"},
-  {v:3, icon:"👍"},
-  {v:4, icon:"👍👍"},
+  {v:1, icon:"👎👎", label:"Strong No Hire"},
+  {v:2, icon:"👎",   label:"No Hire"},
+  {v:3, icon:"👍",   label:"Hire"},
+  {v:4, icon:"👍👍", label:"Strong Hire"},
 ];
 
 /* ---------------- default config ---------------- */
@@ -520,7 +520,7 @@ function collect(){
   f.competencies.items.forEach(it=>{
     const v=b.comps[it.id];
     if(!v) missing.push((it.name||"Competency")+" (scorecard)");
-    else { ctot+=v; data.answers.push({section:f.competencies.title, question:it.name, type:"scorecard", value:(THUMBS.find(t=>t.v===v)||{}).title}); }
+    else { ctot+=v; const th=THUMBS.find(t=>t.v===v)||{}; data.answers.push({section:f.competencies.title, question:it.name, type:"scorecard", value:((th.icon?th.icon+" ":"")+(th.label||""))}); }
   });
   data.score = cmax?{total:ctot,max:cmax,percent:Math.round(ctot/cmax*100)}:null;
 
