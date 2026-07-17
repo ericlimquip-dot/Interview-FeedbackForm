@@ -21,7 +21,7 @@ var MASTER_SHEET_ID = "";   // master log spreadsheet
 var FOLDER_ID       = "";   // Drive folder for per-submission files
 var EMAIL_SUBJECT_PREFIX = "Interview Feedback";
 // Recipients fallback if the form doesn't send any:
-var DEFAULT_RECIPIENTS = "hr@msbu.co.id";
+var DEFAULT_RECIPIENTS = "e@msbu.co.id, erika@msbu.co.id, Fidha@msbu.co.id";
 // Public URL to the MSBU logo (PNG) — shown in the email header (fetched + inlined).
 // Falls back to a clean "M | S | B | U" text wordmark if this ever fails to load.
 var LOGO_URL = "https://msbu.co.id/hs-fs/hubfs/W_Primary%20with%20no%20Slogan_No%20Bg2x.png";

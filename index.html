@@ -212,7 +212,7 @@ function compsDefault(){
 function defaultConfig(){
   return {
     brand:"MSBU",
-    recipients:"hr@msbu.co.id",
+    recipients:"e@msbu.co.id, erika@msbu.co.id, Fidha@msbu.co.id",
     endpoint:BACKEND_URL,
     forms:{
       recruiter:{
@@ -260,7 +260,9 @@ function migrate(c){
   try{
     Object.values(c.forms||{}).forEach(f=>{ if(Array.isArray(f.meta)) f.meta=f.meta.filter(m=>m.label!=="Interview stage"); });
     if(!c.endpoint) c.endpoint = BACKEND_URL;          // auto-fill Backend URL if empty
-    if(!c.recipMigrated){ c.recipients = "hr@msbu.co.id"; c.recipMigrated = true; }  // one-time default recipient
+    const RECIPS = "e@msbu.co.id, erika@msbu.co.id, Fidha@msbu.co.id";
+    if(!c.recipMigrated){ c.recipients = RECIPS; c.recipMigrated = true; }        // first-time default
+    else if(c.recipients === "hr@msbu.co.id"){ c.recipients = RECIPS; }           // refresh the earlier auto-set default; leave any custom list alone
   }catch(e){}
   return c;
 }
